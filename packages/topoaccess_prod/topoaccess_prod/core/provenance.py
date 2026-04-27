@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Any
 
 MAX_EXCERPT_CHARS = 800
+RELOCATION_SCORE_FLOOR = 0.85
+RELOCATION_SCORE_GAP = 0.20
 
 
 def normalize_source_uri(path: str | Path, repo_root: str | Path = ".") -> str:
@@ -52,21 +54,28 @@ def make_span_provenance(source_uri: str | Path, start_line: int, end_line: int,
     text = data.decode("utf-8")
     offsets = line_span_to_offsets(text, start_line, end_line)
     span_bytes = data[offsets["start_byte"] : offsets["end_byte"]]
+    span_byte_length = len(span_bytes)
+    span_line_count = end_line - start_line + 1
     excerpt = span_bytes.decode("utf-8", errors="replace")
     excerpt_truncated = len(excerpt) > MAX_EXCERPT_CHARS
     if len(excerpt) > MAX_EXCERPT_CHARS:
         excerpt = excerpt[:MAX_EXCERPT_CHARS] + "\n..."
+    span_hash = compute_sha256(span_bytes)
     return {
         "source_uri": normalized,
         "start_line": offsets["start_line"],
         "end_line": offsets["end_line"],
         "start_byte": offsets["start_byte"],
         "end_byte": offsets["end_byte"],
-        "span_byte_length": len(span_bytes),
-        "span_line_count": end_line - start_line + 1,
+        "span_byte_length": span_byte_length,
+        "span_line_count": span_line_count,
         "hash_algorithm": "sha256",
-        "span_hash": compute_sha256(span_bytes),
+        "span_hash": span_hash,
         "content_hash": compute_sha256(data),
+        "prefix_hash": _adjacent_line_hash(data, start_line, before=True),
+        "suffix_hash": _adjacent_line_hash(data, end_line, before=False),
+        "section_anchor_hash": _section_anchor_hash(data, start_line),
+        "occurrence_index": _occurrence_index(data, span_hash, span_byte_length, span_line_count, offsets["start_byte"]),
         "bounded_excerpt": excerpt,
         "excerpt_truncated": excerpt_truncated,
         "verified": True,
@@ -105,18 +114,31 @@ def verify_span_provenance(entry: dict[str, Any], repo_root: str | Path = ".") -
         matches = _find_span_hash_matches(data, expected_span_hash, span_byte_length, int(entry.get("span_line_count", 1)))
         if len(matches) == 1:
             result["result_status"] = "pass"
-            result["reason"] = "span hash verified at changed location"
+            result["reason"] = "pass_relocated_unique"
             result["actual_span_hash"] = expected_span_hash
             result["location_changed"] = True
             result["current_location"] = matches[0]
             return result
         if len(matches) > 1:
-            result["reason"] = "ambiguous_span_location_force_reaudit"
+            scored = _score_relocation_candidates(data, matches, entry)
+            winner = _select_relocation_winner(scored)
+            result["relocation_candidates"] = scored
+            if winner:
+                result["result_status"] = "pass"
+                result["reason"] = "pass_relocated_scored"
+                result["actual_span_hash"] = expected_span_hash
+                result["location_changed"] = True
+                result["current_location"] = winner["location"]
+                result["relocation_score"] = winner["score"]
+                result["relocation_score_gap"] = winner["score_gap"]
+                result["context_anchor_matched"] = True
+                return result
+            result["reason"] = "fail_ambiguous_force_reaudit"
             return result
-        result["reason"] = "audited_span_missing_force_reaudit"
+        result["reason"] = "fail_missing_force_reaudit"
         return result
     result["result_status"] = "pass"
-    result["reason"] = "span hash verified"
+    result["reason"] = "pass_original_offset"
     return result
 
 
@@ -177,9 +199,13 @@ def _find_span_hash_matches(data: bytes, expected_span_hash: str, span_byte_leng
                 "end_line": start_line + span_line_count - 1,
                 "start_byte": start_byte,
                 "end_byte": end_byte,
+                "span_hash": expected_span_hash,
             }
         )
-    return matches
+    return [
+        {**match, "occurrence_index": index}
+        for index, match in enumerate(sorted(matches, key=lambda item: item["start_byte"]))
+    ]
 
 
 def _line_starts(data: bytes) -> list[tuple[int, int]]:
@@ -192,7 +218,97 @@ def _line_starts(data: bytes) -> list[tuple[int, int]]:
     return starts
 
 
+def _line_ranges(data: bytes) -> list[tuple[int, int, int]]:
+    starts = _line_starts(data)
+    ranges = []
+    for index, (line, start) in enumerate(starts):
+        end = starts[index + 1][1] if index + 1 < len(starts) else len(data)
+        ranges.append((line, start, end))
+    return ranges
+
+
 def _span_line_count(span: bytes) -> int:
     if not span:
         return 1
     return span.count(b"\n") + (0 if span.endswith(b"\n") else 1)
+
+
+def _adjacent_line_hash(data: bytes, line: int, before: bool) -> str | None:
+    target_line = line - 1 if before else line + 1
+    if target_line < 1:
+        return None
+    for current_line, start, end in _line_ranges(data):
+        if current_line == target_line:
+            return compute_sha256(data[start:end])
+    return None
+
+
+def _section_anchor_hash(data: bytes, start_line: int) -> str | None:
+    anchor = None
+    for line, start, end in _line_ranges(data):
+        if line >= start_line:
+            break
+        text = data[start:end].decode("utf-8", errors="replace").strip()
+        if text.startswith("#"):
+            anchor = data[start:end]
+    return compute_sha256(anchor) if anchor else None
+
+
+def _occurrence_index(data: bytes, span_hash: str, span_byte_length: int, span_line_count: int, start_byte: int) -> int:
+    for index, match in enumerate(_find_span_hash_matches(data, span_hash, span_byte_length, span_line_count)):
+        if match["start_byte"] == start_byte:
+            return index
+    return 0
+
+
+def _score_relocation_candidates(data: bytes, matches: list[dict], entry: dict[str, Any]) -> list[dict]:
+    total_lines = max(len(_line_ranges(data)), 1)
+    total_bytes = max(len(data), 1)
+    original_line = int(entry.get("start_line", 1))
+    original_byte = int(entry.get("start_byte", 0))
+    scored = []
+    for match in matches:
+        prefix_matches = bool(entry.get("prefix_hash") and entry.get("prefix_hash") == _adjacent_line_hash(data, match["start_line"], before=True))
+        suffix_matches = bool(entry.get("suffix_hash") and entry.get("suffix_hash") == _adjacent_line_hash(data, match["end_line"], before=False))
+        section_matches = bool(entry.get("section_anchor_hash") and entry.get("section_anchor_hash") == _section_anchor_hash(data, match["start_line"]))
+        occurrence_matches = entry.get("occurrence_index") == match.get("occurrence_index")
+        line_proximity = max(0.0, 1.0 - (abs(match["start_line"] - original_line) / total_lines))
+        byte_proximity = max(0.0, 1.0 - (abs(match["start_byte"] - original_byte) / total_bytes))
+        score = (
+            (0.30 if prefix_matches else 0.0)
+            + (0.30 if suffix_matches else 0.0)
+            + (0.25 if section_matches else 0.0)
+            + (0.10 if occurrence_matches else 0.0)
+            + (0.025 * line_proximity)
+            + (0.025 * byte_proximity)
+        )
+        scored.append(
+            {
+                "location": {key: match[key] for key in ["start_line", "end_line", "start_byte", "end_byte"]},
+                "occurrence_index": match.get("occurrence_index"),
+                "score": round(score, 6),
+                "prefix_hash_match": prefix_matches,
+                "suffix_hash_match": suffix_matches,
+                "section_anchor_hash_match": section_matches,
+                "occurrence_index_match": occurrence_matches,
+                "line_proximity": round(line_proximity, 6),
+                "byte_proximity": round(byte_proximity, 6),
+                "context_anchor_match": prefix_matches or suffix_matches or section_matches,
+            }
+        )
+    return sorted(scored, key=lambda item: (-item["score"], item["location"]["start_byte"]))
+
+
+def _select_relocation_winner(scored: list[dict]) -> dict | None:
+    if not scored:
+        return None
+    top = scored[0]
+    second_score = scored[1]["score"] if len(scored) > 1 else 0.0
+    score_gap = round(top["score"] - second_score, 6)
+    if top["score"] < RELOCATION_SCORE_FLOOR:
+        return None
+    if score_gap < RELOCATION_SCORE_GAP:
+        return None
+    if not top["context_anchor_match"]:
+        return None
+    return {**top, "score_gap": score_gap}

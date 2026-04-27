@@ -34,6 +34,7 @@ def test_verify_span_provenance_passes_for_unchanged_content(tmp_path):
     result = verify_span_provenance(entry, repo_root=tmp_path)
 
     assert result["result_status"] == "pass"
+    assert result["reason"] == "pass_original_offset"
     assert result["actual_span_hash"] == entry["span_hash"]
 
 
@@ -46,7 +47,7 @@ def test_verify_span_provenance_fails_after_span_changes(tmp_path):
     result = verify_span_provenance(entry, repo_root=tmp_path)
 
     assert result["result_status"] == "fail"
-    assert result["reason"] == "audited_span_missing_force_reaudit"
+    assert result["reason"] == "fail_missing_force_reaudit"
 
 
 def test_verify_provenance_entries_requires_span_hash_for_structured_source(tmp_path):
@@ -75,6 +76,7 @@ def test_verify_span_provenance_passes_when_span_moves_in_same_source(tmp_path):
     result = verify_span_provenance(entry, repo_root=tmp_path)
 
     assert result["result_status"] == "pass"
+    assert result["reason"] == "pass_relocated_unique"
     assert result["location_changed"] is True
     assert result["current_location"]["start_line"] == 3
     assert result["expected_span_hash"] == entry["span_hash"]
@@ -90,7 +92,7 @@ def test_verify_span_provenance_fails_when_audited_span_missing(tmp_path):
     result = verify_span_provenance(entry, repo_root=tmp_path)
 
     assert result["result_status"] == "fail"
-    assert result["reason"] == "audited_span_missing_force_reaudit"
+    assert result["reason"] == "fail_missing_force_reaudit"
     assert result["location_changed"] is False
 
 
@@ -103,11 +105,53 @@ def test_verify_span_provenance_passes_when_source_changes_but_original_offset_m
     result = verify_span_provenance(entry, repo_root=tmp_path)
 
     assert result["result_status"] == "pass"
+    assert result["reason"] == "pass_original_offset"
     assert result["location_changed"] is False
     assert result["actual_span_hash"] == entry["span_hash"]
 
 
-def test_verify_span_provenance_fails_when_moved_span_has_multiple_matches(tmp_path):
+def test_verify_span_provenance_passes_multi_match_with_context_anchor_winner(tmp_path):
+    source = tmp_path / "doc.md"
+    source.write_text("# A\nbefore\ntarget\nafter\n# B\ntarget\nother\n", encoding="utf-8")
+    entry = make_span_provenance("doc.md", 3, 3, repo_root=tmp_path)
+    source.write_text("# B\ntarget\nother\n# A\nbefore\ntarget\nafter\n", encoding="utf-8")
+
+    result = verify_span_provenance(entry, repo_root=tmp_path)
+
+    assert result["result_status"] == "pass"
+    assert result["reason"] == "pass_relocated_scored"
+    assert result["location_changed"] is True
+    assert result["current_location"]["start_line"] == 6
+    assert result["relocation_score"] >= 0.85
+    assert result["relocation_score_gap"] >= 0.20
+    assert result["context_anchor_matched"] is True
+
+
+def test_verify_span_provenance_fails_multi_match_below_confidence_floor(tmp_path):
+    source = tmp_path / "doc.md"
+    source.write_text("# A\ntarget\n", encoding="utf-8")
+    entry = make_span_provenance("doc.md", 2, 2, repo_root=tmp_path)
+    source.write_text("# B\npad\ntarget\n# A\ntarget\n", encoding="utf-8")
+
+    result = verify_span_provenance(entry, repo_root=tmp_path)
+
+    assert result["result_status"] == "fail"
+    assert result["reason"] == "fail_ambiguous_force_reaudit"
+
+
+def test_verify_span_provenance_fails_repeated_headers_with_no_anchor_match(tmp_path):
+    source = tmp_path / "doc.md"
+    source.write_text("xx\ntarget\n", encoding="utf-8")
+    entry = make_span_provenance("doc.md", 2, 2, repo_root=tmp_path)
+    source.write_text("y\ntarget\ntarget\n", encoding="utf-8")
+
+    result = verify_span_provenance(entry, repo_root=tmp_path)
+
+    assert result["result_status"] == "fail"
+    assert result["reason"] == "fail_ambiguous_force_reaudit"
+
+
+def test_verify_span_provenance_fails_when_moved_span_has_multiple_matches_without_winner(tmp_path):
     source = tmp_path / "doc.md"
     source.write_text("target\n", encoding="utf-8")
     entry = make_span_provenance("doc.md", 1, 1, repo_root=tmp_path)
@@ -116,7 +160,7 @@ def test_verify_span_provenance_fails_when_moved_span_has_multiple_matches(tmp_p
     result = verify_span_provenance(entry, repo_root=tmp_path)
 
     assert result["result_status"] == "fail"
-    assert result["reason"] == "ambiguous_span_location_force_reaudit"
+    assert result["reason"] == "fail_ambiguous_force_reaudit"
 
 
 def test_make_span_provenance_bounds_and_truncates_excerpt(tmp_path):

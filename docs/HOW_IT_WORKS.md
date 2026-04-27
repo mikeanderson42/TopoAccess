@@ -8,7 +8,7 @@ agent -> CLI/HTTP/stdio -> workspace profile -> tools/cache/router -> provenance
 
 For audited answers, TopoAccess can attach structured span provenance. A span-hash entry records the source URI, cited line span, byte offsets, byte length, line count, full-content hash, exact cited-span hash, and a bounded excerpt. Agent-facing outputs do not include full raw audited span text by default.
 
-Verification tries the original byte offset first. If the file changed and the original offset no longer matches, TopoAccess scans live source candidates with the same byte length and line count. Exactly one matching hash can pass with `location_changed=true`; zero matches or multiple matches force reaudit.
+Verification tries the original byte offset first. If the file changed and the original offset no longer matches, TopoAccess scans live source candidates with the same byte length and line count. Zero matches return `fail_missing_force_reaudit`. One match returns `pass_relocated_unique`. Multiple matches are scored with prefix hash, suffix hash, section-anchor hash, occurrence index, line proximity, and byte proximity; the result only passes when the top score is at least `0.85`, the score gap is at least `0.20`, and at least one context anchor matches. Otherwise TopoAccess returns `fail_ambiguous_force_reaudit`.
 
 Post-call validation uses a field-mask posture for payload-style checks: expected fields may change, but changes outside the allowed mask are unauthorized. Raw JSON equality is not treated as the authority for scoped validation.
 

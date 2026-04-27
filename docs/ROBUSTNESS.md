@@ -35,7 +35,7 @@ Summary:
 - Tool-schema, HTTP-like, and stdio-like malformed payloads.
 - Mutation-style fixture changes that should trigger post-edit validation or uncertainty.
 - Span-hash provenance checks that reject stale cited regions when audit-grade verification is required, while allowing exactly one moved matching span to pass with `location_changed=true`.
-- Duplicate matching span locations force reaudit instead of choosing an arbitrary source location.
+- Duplicate matching span locations are scored by hashed context anchors and proximity signals. Relocation only passes above the configured confidence floor and score-gap threshold; otherwise it forces reaudit instead of choosing an arbitrary source location.
 - Field-mask scoped diff checks that reject unauthorized payload changes without treating raw JSON equality as the sole authority.
 
 ## What Changed

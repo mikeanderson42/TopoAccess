@@ -20,7 +20,8 @@ Public API rules:
 - Provenance fields are required for audited answers. Audit-grade provenance can include span-hash entries with `source_uri`, line span, byte offsets, `span_byte_length`, `span_line_count`, `content_hash`, `span_hash`, and a bounded excerpt.
 - Agent-facing provenance does not emit full raw audited span text by default. Bounded excerpts are display aids, not a second source of truth.
 - A `source_uri` or path by itself is not immutable evidence; audit-required verification should fail if a cited source has no span hash or if the cited span no longer matches.
-- If a cited span moves within the same source, verification can pass by scanning candidate spans with the same byte length, line count, and hash. Multiple matching candidates force reaudit instead of guessing.
+- If a cited span moves within the same source, verification can pass by scanning candidate spans with the same byte length, line count, and hash.
+- Multiple matching candidate spans are scored by prefix, suffix, section-anchor, occurrence, line-proximity, and byte-proximity signals. Relocation only passes when the top score is at least `0.85`, the score gap is at least `0.20`, and at least one context anchor matches.
 - Post-call validation should prefer field-mask scoped diffs over raw JSON equality, so allowed response fields can change without approving unrelated mutations.
 - Unsupported responses must be explicit.
 - Optional model-backed synthesis is category-gated and configured by workspace profile.
