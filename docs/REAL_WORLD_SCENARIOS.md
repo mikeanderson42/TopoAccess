@@ -89,3 +89,17 @@ python packages/topoaccess_prod/scripts/topoaccess_scenario_benchmark.py \
 ```
 
 The scenario benchmark is public and model-free. It does not require Qwen, LM Studio, Ollama, GPU access, private caches, or model weights.
+
+## External-Style Fixtures
+
+V46 adds `examples/external_style_repos/` for more realistic public-safe repo shapes:
+
+- `monorepo_fixture`
+- `api_service_fixture`
+- `docs_portal_fixture`
+- `release_pipeline_fixture`
+- `data_artifact_fixture`
+
+The external-style benchmark completed `1,000` scenarios and `7,000` rows with average assisted token savings of `0.9109`, median assisted savings of `0.9098`, p50/p95 latency of `262.0 ms` / `1282.0 ms`, file/test/command selection of `1.0000` / `1.0000` / `1.0000`, and zero wrong or unsupported high-confidence failures.
+
+These fixtures are still intentionally small enough to live in the repo. They are not substitutes for measuring TopoAccess on your own codebase.

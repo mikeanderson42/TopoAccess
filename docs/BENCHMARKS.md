@@ -137,3 +137,34 @@ python packages/topoaccess_prod/scripts/topoaccess_scenario_benchmark.py \
   --summary .topoaccess/scenario_summary.json \
   --report /tmp/topoaccess_scenario_report.md
 ```
+
+## External-Style Fixture Benchmark
+
+V46 adds a second public fixture benchmark that uses slightly larger, external-style repositories. These fixtures mimic common public repo shapes: a monorepo, API service, docs portal, release pipeline, and data artifact project. The benchmark remains model-free and read-only.
+
+- Scenarios: `1,000`.
+- Rows: `7,000`.
+- Assisted rows: `5,000`.
+- Average assisted token savings: `0.9109`.
+- Median assisted token savings: `0.9098`.
+- p50/p95 latency across all modes: `262.0 ms` / `1282.0 ms`.
+- File/test/command selection: `1.0000` / `1.0000` / `1.0000`.
+- Provenance coverage: `1.0000`.
+- Assisted hallucinated files/commands: `0` / `0`.
+- Wrong high-confidence answers: `0`.
+- Unsupported high-confidence answers: `0`.
+
+The external-style benchmark is deliberately more conservative than the V45 scenario benchmark. It includes broader fixture shapes and weak categories like troubleshooting, ambiguous requests, and feature planning.
+
+Reproduce the external-style benchmark:
+
+```bash
+python packages/topoaccess_prod/scripts/topoaccess_external_style_benchmark.py \
+  --fixtures examples/external_style_repos \
+  --scenarios 1000 \
+  --fallback-scenarios 250 \
+  --seed 20260427 \
+  --out .topoaccess/external_style_benchmark.jsonl \
+  --summary .topoaccess/external_style_summary.json \
+  --report /tmp/topoaccess_external_style_report.md
+```

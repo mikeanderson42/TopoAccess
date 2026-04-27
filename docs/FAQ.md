@@ -28,6 +28,21 @@ Exact tool routing, compact context packs, cache-aware repo metadata, and determ
 
 The scenario benchmark chains multiple steps across fixture repos, including planning, lookup, command choice, post-edit validation, release checks, and unsupported/prompt-injection handling. In the simulated public fixture scenarios, assisted modes averaged `0.9307` token savings with `1.0000` assisted post-edit validation pass rate.
 
+## What changed in the external-style benchmark?
+
+The external-style benchmark uses more varied public-safe fixtures that mimic a monorepo, API service, docs portal, release pipeline, and data artifact repo. Assisted modes averaged `0.9109` token savings across `1,000` scenarios, with zero wrong or unsupported high-confidence failures. It is intentionally fixture-based and not a universal production guarantee.
+
 ## What repos benefit most?
 
 Repos with meaningful tests, scripts, docs, release workflows, and repeated exact lookup questions tend to benefit most. Very small repos may see smaller absolute savings.
+
+## Can I estimate ROI?
+
+Yes. Use `docs/ROI.md` or run:
+
+```bash
+python packages/topoaccess_prod/scripts/topoaccess_roi.py \
+  --tasks-per-day 100 \
+  --tokens-per-task 20000 \
+  --savings 0.9307
+```
