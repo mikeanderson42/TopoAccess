@@ -1,0 +1,15 @@
+[project]
+name = "topoaccess-prod"
+version = "1.0.0rc1"
+description = "Production TopoAccess daily-driver runtime wrapper"
+requires-python = ">=3.10"
+readme = "README.md"
+authors = [{name = "Michael A. Anderson", email = "MikeAnderson42@gmail.com"}]
+license = "Apache-2.0"
+
+[project.scripts]
+topoaccessctl = "topoaccess_prod.cli.topoaccessctl:main"
+
+[tool.setuptools.packages.find]
+include = ["topoaccess_prod*", "topoaccess*"]
+exclude = ["runs*", "release*", "configs*", "tests*"]

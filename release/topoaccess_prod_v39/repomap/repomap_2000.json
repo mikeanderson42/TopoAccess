@@ -1,0 +1,25 @@
+{
+  "budget": 2000,
+  "commands": [
+    "topoaccessctl validate-release"
+  ],
+  "files": [
+    "packages/topoaccess_prod/README.md",
+    "packages/topoaccess_prod/scripts/topoaccess_agent.py",
+    "packages/topoaccess_prod/scripts/topoaccessctl.py",
+    "packages/topoaccess_prod/topoaccess_prod/cli/agent.py",
+    "packages/topoaccess_prod/topoaccess_prod/integrations/tool_schema.py",
+    "packages/topoaccess_prod/tests"
+  ],
+  "provenance": [
+    "release/topoaccess_prod_v36/release_manifest.json"
+  ],
+  "symbols": [
+    "topoaccessctl",
+    "codex_brief",
+    "all_schemas"
+  ],
+  "tests": [
+    "python -m pytest packages/topoaccess_prod/tests"
+  ]
+}

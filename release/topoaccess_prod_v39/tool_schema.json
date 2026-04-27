@@ -1,0 +1,330 @@
+{
+  "tools": [
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": false,
+      "name": "exact_lookup",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": false,
+      "name": "symbol_lookup",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": false,
+      "name": "command_lookup",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": false,
+      "name": "artifact_lookup",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": false,
+      "name": "report_fact_lookup",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": false,
+      "name": "test_impact",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": true,
+      "name": "change_plan",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": true,
+      "name": "patch_plan",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": true,
+      "name": "troubleshooting",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": true,
+      "name": "report_synthesis",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": false,
+      "name": "explain_trace",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": false,
+      "name": "self_check",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    },
+    {
+      "input": {
+        "query": "string",
+        "workspace_profile": "string"
+      },
+      "model_fallback_allowed": false,
+      "name": "post_edit_validate",
+      "output": {
+        "answer": "string",
+        "route": "string",
+        "trace_id": "string"
+      },
+      "provenance": {
+        "fields": [
+          "files",
+          "commands",
+          "reports"
+        ],
+        "required": true
+      },
+      "safety": {
+        "nonpreferred_model_used": false,
+        "preferred_model_verified": true
+      }
+    }
+  ],
+  "version": "topoaccess-prod-v31-agent-harness"
+}

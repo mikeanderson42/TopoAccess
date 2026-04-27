@@ -1,0 +1,1 @@
+modes: [minimal, standard, audit, codex, claude, openclaw, hermes, json_tool, stdio_tool]

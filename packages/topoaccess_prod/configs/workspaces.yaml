@@ -1,0 +1,11 @@
+profiles:
+  - name: default
+    repo_root: .
+    cache_path: cache/topoaccess_v21
+    release_path: release/topoaccess_prod
+    preferred_model_search: runs/topoaccess_v22/preferred_model_search.jsonl
+    service_port: 8765
+    default_policy: final_default_policy
+    exact_lookup_policy: tool_only
+    category_model_policy: category_gated_preferred_model
+    dashboard_path: release/topoaccess_prod/dashboard.json

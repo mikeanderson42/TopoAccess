@@ -1,0 +1,9 @@
+{
+  "claude": "claude",
+  "codex": "codex",
+  "generic": "standard",
+  "hermes": "hermes",
+  "http": "json_tool",
+  "openclaw": "openclaw",
+  "stdio": "stdio_tool"
+}
