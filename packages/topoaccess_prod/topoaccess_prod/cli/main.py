@@ -113,7 +113,7 @@ def build_parser() -> argparse.ArgumentParser:
     install.set_defaults(handler=commands.cmd_install_harness)
 
     setup = sub.add_parser("setup", help="Generate dry-run setup snippets for common harnesses.")
-    setup.add_argument("target", choices=["codex", "claude", "cursor", "aider", "generic", "http", "stdio"])
+    setup.add_argument("target", choices=["codex", "claude", "cursor", "aider", "openclaw", "openhands", "hermes", "generic", "http", "stdio"])
     setup.add_argument("--profile", default="demo")
     setup.add_argument("--dry-run", action="store_true", default=True)
     setup.add_argument("--apply", action="store_true", help="Reserved for future explicit external-config writers.")

@@ -8,9 +8,25 @@ TARGET_ALIASES = {
     "cursor": "cursor",
     "aider": "aider",
     "codex": "codex",
+    "openclaw": "openclaw",
+    "openhands": "openhands",
+    "hermes": "hermes",
     "generic": "generic",
     "http": "http",
     "stdio": "stdio",
+}
+
+TARGET_NOTES = {
+    "codex": "Use codex-brief before edits and post-edit after changes.",
+    "claude-code": "Use hook examples in examples/integrations/claude_hooks/.",
+    "cursor": "Use examples/integrations/cursor_rules/topoaccess.mdc.",
+    "aider": "Use repo-map exports and call topoaccess before broad-context prompts.",
+    "openclaw": "Use CLI/HTTP snippets when the OpenClaw client is installed.",
+    "openhands": "Use CLI/HTTP snippets when the OpenHands client is installed.",
+    "hermes": "Use generic CLI/stdio/HTTP integration snippets.",
+    "generic": "Use CLI, HTTP, stdio, or schema files from examples/integrations/.",
+    "http": "Run topoaccess serve-http --smoke before connecting a client.",
+    "stdio": "Run topoaccess stdio interactively from a harness process.",
 }
 
 
@@ -34,6 +50,9 @@ def run_setup_shortcut(target: str, profile: str = "demo", dry_run: bool = True,
         "dry_run": dry_run,
         "apply": apply,
         "snippet": payload["snippet"],
+        "test_command": f"topoaccess install-harness --target {canonical} --profile {profile} --dry-run",
+        "integration_note": TARGET_NOTES.get(canonical, "Use TopoAccess as a model-free repo-intelligence sidecar."),
+        "target_installed_check": "not_checked",
         "external_configs_modified": False,
         "result_status": "pass",
     }

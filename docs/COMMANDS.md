@@ -50,6 +50,10 @@ topoaccess install-harness --target codex --profile demo --dry-run
 topoaccess setup codex --profile demo --dry-run
 topoaccess setup claude --profile demo --dry-run
 topoaccess setup cursor --profile demo --dry-run
+topoaccess setup aider --profile demo --dry-run
+topoaccess setup openclaw --profile demo --dry-run
+topoaccess setup openhands --profile demo --dry-run
+topoaccess setup hermes --profile demo --dry-run
 topoaccess setup generic --profile demo --dry-run
 topoaccess setup http --profile demo --dry-run
 topoaccess setup stdio --profile demo --dry-run

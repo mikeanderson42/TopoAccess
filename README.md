@@ -120,6 +120,15 @@ topoaccessctl --help
 - Aider: use token-budgeted repo-map exports.
 - OpenClaw/OpenHands/Hermes/generic: use CLI, HTTP, stdio, OpenAPI, or MCP-like schemas from `examples/integrations/schemas/`.
 
+| If you use... | Start with... | Notes |
+| --- | --- | --- |
+| Codex | `topoaccess setup codex --dry-run` | Brief before edits, post-edit after changes. |
+| Claude Code | `topoaccess setup claude --dry-run` | Pair with hook examples. |
+| Cursor | `topoaccess setup cursor --dry-run` | Pair with Cursor rules. |
+| Aider | `topoaccess setup aider --dry-run` | Use repo-map/context snippets. |
+| OpenClaw/OpenHands | `topoaccess setup openclaw --dry-run` / `topoaccess setup openhands --dry-run` | Use CLI/HTTP snippets when clients are installed. |
+| Generic/HTTP/stdio | `topoaccess setup generic --dry-run` | Use schemas under `examples/integrations/`. |
+
 ## Safety Model
 
 - Exact lookup remains tool-only.

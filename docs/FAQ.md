@@ -74,4 +74,4 @@ No. `topoaccess doctor --profile demo --fix` only performs safe local repairs su
 
 ## Do setup shortcuts modify harness configs?
 
-No. `topoaccess setup codex`, `topoaccess setup claude`, `topoaccess setup cursor`, `topoaccess setup generic`, `topoaccess setup http`, and `topoaccess setup stdio` are dry-run by default and print setup snippets.
+No. `topoaccess setup codex`, `topoaccess setup claude`, `topoaccess setup cursor`, `topoaccess setup aider`, `topoaccess setup openclaw`, `topoaccess setup openhands`, `topoaccess setup hermes`, `topoaccess setup generic`, `topoaccess setup http`, and `topoaccess setup stdio` are dry-run by default and print setup snippets.
