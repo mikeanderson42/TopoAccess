@@ -1,6 +1,6 @@
 # Real-World Fixture Scenarios
 
-TopoAccess V45 adds a model-free scenario benchmark that simulates multi-step coding-agent workflows over small public fixture repositories.
+TopoAccess includes a model-free scenario benchmark that simulates multi-step coding-agent workflows over small public fixture repositories.
 
 The goal is not to claim universal production performance. The goal is to show how TopoAccess behaves when an agent has to move through a realistic sequence: plan, inspect files, choose tests, choose commands, validate after edits, reuse cache context, and reject unsupported or prompt-injection requests.
 
@@ -87,7 +87,7 @@ The scenario benchmark is public and model-free. It does not require Qwen, LM St
 
 ## External-Style Fixtures
 
-V46 adds `examples/external_style_repos/` for more realistic public-safe repo shapes:
+`examples/external_style_repos/` contains more realistic public-safe repo shapes:
 
 - `monorepo_fixture`
 - `api_service_fixture`
@@ -96,5 +96,17 @@ V46 adds `examples/external_style_repos/` for more realistic public-safe repo sh
 - `data_artifact_fixture`
 
 The external-style benchmark completed `1,000` scenarios and `7,000` rows with average assisted token savings of `0.9109`, median assisted savings of `0.9098`, p50/p95 latency of `262.0 ms` / `1282.0 ms`, file/test/command selection of `1.0000` / `1.0000` / `1.0000`, and zero wrong or unsupported high-confidence failures.
+
+## Adversarial Follow-Up
+
+The current robustness gauntlet adds CLI fuzzing, schema fuzzing, cache-chaos checks, mutation-style fixture checks, and adversarial scenarios over the scenario and external-style fixtures.
+
+- Total gauntlet rows: `23,024`.
+- Failures: `0`.
+- Exact-lookup model invocations: `0`.
+- Wrong high-confidence answers: `0`.
+- Unsupported high-confidence answers: `0`.
+
+These are simulated public fixture results. They are useful regression evidence, but external repositories and harness integrations can behave differently.
 
 These fixtures are still intentionally small enough to live in the repo. They are not substitutes for measuring TopoAccess on your own codebase.

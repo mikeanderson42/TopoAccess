@@ -11,19 +11,17 @@ for path in [ROOT, REPO]:
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from topoaccess_prod.harness.failure_mining import mine_failures
+from topoaccess_prod.harness.regression_matrix import run_regression_matrix
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser()
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--input")
-    group.add_argument("--inputs", nargs="+")
+    parser = argparse.ArgumentParser(description="Run TopoAccess CLI and legacy-wrapper regression matrix.")
+    parser.add_argument("--profile", default="demo")
     parser.add_argument("--out", required=True)
     parser.add_argument("--report", required=True)
     args = parser.parse_args()
-    rows = mine_failures(args.inputs or args.input, args.out, args.report)
-    print({"failure_mining_groups": len(rows)})
+    rows = run_regression_matrix(args.profile, args.out, args.report)
+    print({"regression_rows": len(rows), "out": args.out})
     return 0
 
 

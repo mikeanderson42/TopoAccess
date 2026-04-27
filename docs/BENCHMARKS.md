@@ -76,11 +76,11 @@ topoaccess benchmark rows \
 
 ## Limitations
 
-This is a deterministic public benchmark for repo-agent workflows, not a universal performance guarantee. Real savings depend on repository size, task mix, harness behavior, workspace profile quality, and whether optional model-backed synthesis is enabled for category-gated tasks. Public CI and the public benchmark remain model-free. Exact lookup never requires a model.
+This is a deterministic public benchmark for repo-agent workflows, not a substitute for measuring your own repository. Real savings depend on repository size, task mix, harness behavior, workspace profile quality, and whether optional model-backed synthesis is enabled for category-gated tasks. Public CI and the public benchmark remain model-free. Exact lookup never requires a model.
 
 ## Real-World Fixture Scenarios
 
-V45 adds simulated public fixture scenarios that chain multiple agent steps together across small deterministic repositories. This benchmark is still model-free and fixture-based, but it better represents how users ask an agent to plan, inspect, validate, and choose commands across a workflow.
+The scenario benchmark uses simulated public fixture scenarios that chain multiple agent steps together across small deterministic repositories. This benchmark is still model-free and fixture-based, but it better represents how users ask an agent to plan, inspect, validate, and choose commands across a workflow.
 
 - Scenario workflows: `2,500`.
 - Scenario steps: `44,443`.
@@ -135,7 +135,7 @@ topoaccess benchmark scenario \
 
 ## External-Style Fixture Benchmark
 
-V46 adds a second public fixture benchmark that uses slightly larger, external-style repositories. These fixtures mimic common public repo shapes: a monorepo, API service, docs portal, release pipeline, and data artifact project. The benchmark remains model-free and read-only.
+The external-style fixture benchmark uses slightly larger, public-safe repositories. These fixtures mimic common public repo shapes: a monorepo, API service, docs portal, release pipeline, and data artifact project. The benchmark remains model-free and read-only.
 
 - Scenarios: `1,000`.
 - Rows: `7,000`.
@@ -162,4 +162,51 @@ python packages/topoaccess_prod/scripts/topoaccess_external_style_benchmark.py \
   --out .topoaccess/external_style_benchmark.jsonl \
   --summary .topoaccess/external_style_summary.json \
   --report /tmp/topoaccess_external_style_report.md
+```
+
+## Adversarial Robustness Gauntlet
+
+The robustness gauntlet stresses the public command surface and model-free tool routing rather than measuring token savings. It is fixture-based and deterministic for the configured seeds.
+
+| Phase | Rows | Result |
+| --- | ---: | --- |
+| Regression matrix | `16` | `0` failures |
+| CLI fuzz | `5,000` | `0` failures |
+| Tool schema / HTTP / stdio fuzz | `5,000` | `0` failures |
+| Cache chaos | `2,000` | `0` failures |
+| Fixture mutation checks | `1,000` | `0` failures |
+| Adversarial scenarios | `5,000` | `0` failures |
+| Capped adversarial stress | `5,000` | `0` failures |
+| Performance guard | `8` | `0` failures |
+
+Summary:
+
+- Total robustness rows: `23,024`.
+- Wrong high-confidence answers: `0`.
+- Unsupported high-confidence answers: `0`.
+- Assisted hallucinated files/commands: `0` / `0`.
+- Exact-lookup model invocations: `0`.
+- p50/p95 observed gauntlet latency: `114.0 ms` / `384.0 ms`.
+
+What this does and does not prove:
+
+- It supports the claim that the public fixture command surface handles malformed commands, malformed tool payloads, stale cache states, and adversarial fixture scenarios without hidden model requirements.
+- It does not prove production correctness across every repository or external harness version.
+- It keeps exact lookup tool-only and keeps public tests model-free.
+
+Reproduce the core gauntlet summaries:
+
+```bash
+python packages/topoaccess_prod/scripts/topoaccess_regression_matrix.py \
+  --profile demo \
+  --out .topoaccess/regression_matrix.jsonl \
+  --report /tmp/topoaccess_regression_matrix.md
+
+python packages/topoaccess_prod/scripts/topoaccess_cli_fuzz.py \
+  --profile demo \
+  --cases 5000 \
+  --fallback-cases 1000 \
+  --seed 4601 \
+  --out .topoaccess/cli_fuzz.jsonl \
+  --report /tmp/topoaccess_cli_fuzz.md
 ```

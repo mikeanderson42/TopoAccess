@@ -21,6 +21,9 @@ Current public benchmark:
 | Scenario p50 / p95 latency across all modes | `167.0 ms` / `1166.0 ms` |
 | External-style fixture benchmark | `1,000` scenarios / `7,000` rows |
 | External-style average assisted token savings | `0.9109` |
+| Adversarial robustness gauntlet | `23,024` model-free rows |
+| Adversarial gauntlet failures | `0` |
+| Exact-lookup model invocations in gauntlet | `0` |
 | Assisted post-edit validation pass rate | `1.0000` |
 | Wrong high-confidence answers | `0` |
 | Unsupported high-confidence answers | `0` |
@@ -28,6 +31,7 @@ Current public benchmark:
 - Exact lookup: tool-only, no model fallback.
 - Public CI and public benchmark: model-free, cache-free, GPU-free, and private-runtime-free.
 - Model posture: model-agnostic by default; optional model-backed synthesis is configured per workspace.
+- Robustness evidence: fixture-based adversarial tests cover CLI fuzzing, schema fuzzing, cache chaos, mutation checks, and prompt-injection/unsupported scenarios. They are evidence for the public fixture suite, not a substitute for measuring your own repo.
 
 ## How It Works
 
@@ -139,6 +143,8 @@ Sponsorship supports public benchmarks, docs, harness integrations, fixture main
 - [How It Works](docs/HOW_IT_WORKS.md)
 - [Harness Integration](docs/HARNESS_INTEGRATION.md)
 - [Benchmarks](docs/BENCHMARKS.md)
+- [Robustness](docs/ROBUSTNESS.md)
+- [Failure Modes](docs/FAILURE_MODES.md)
 - [Token Savings](docs/TOKEN_SAVINGS.md)
 - [Commands](docs/COMMANDS.md)
 - [Migration](docs/MIGRATION.md)

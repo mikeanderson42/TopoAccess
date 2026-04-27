@@ -11,19 +11,18 @@ for path in [ROOT, REPO]:
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from topoaccess_prod.harness.failure_mining import mine_failures
+from topoaccess_prod.harness.performance_guard import run_performance_guard
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser()
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--input")
-    group.add_argument("--inputs", nargs="+")
+    parser = argparse.ArgumentParser(description="Check common TopoAccess command latency against public thresholds.")
+    parser.add_argument("--profile", default="demo")
+    parser.add_argument("--baseline", default="")
     parser.add_argument("--out", required=True)
     parser.add_argument("--report", required=True)
     args = parser.parse_args()
-    rows = mine_failures(args.inputs or args.input, args.out, args.report)
-    print({"failure_mining_groups": len(rows)})
+    rows = run_performance_guard(args.profile, args.baseline, args.out, args.report)
+    print({"performance_rows": len(rows), "out": args.out})
     return 0
 
 
