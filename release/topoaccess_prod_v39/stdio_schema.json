@@ -1,0 +1,13 @@
+{
+  "request": {
+    "input": "object",
+    "profile": "string",
+    "tool": "string"
+  },
+  "response": {
+    "provenance": "array",
+    "safety": "object",
+    "unsupported": "boolean"
+  },
+  "transport": "stdio"
+}

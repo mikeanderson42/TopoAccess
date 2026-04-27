@@ -1,0 +1,2 @@
+dry_run_default: true
+targets: [codex, claude-code, openclaw, hermes, generic]

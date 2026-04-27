@@ -1,0 +1,2 @@
+fallback_tasks: 1000
+modes: [codex_with_topoaccess, codex_without_topoaccess, claude_with_topoaccess, openclaw_with_topoaccess, generic_with_topoaccess]

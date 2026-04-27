@@ -1,0 +1,6 @@
+exact_lookup_policy: tool_only
+model_fallback_categories:
+  - change_planning
+  - model_required_narrative
+  - report_synthesis
+  - troubleshooting

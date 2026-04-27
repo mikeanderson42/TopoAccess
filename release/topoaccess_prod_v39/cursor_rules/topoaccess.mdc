@@ -1,0 +1,4 @@
+---
+globs: packages/topoaccess_prod/**
+---
+Use TopoAccess preflight before edits and post-edit validation after edits. Exact lookup is tool-only. Do not commit local caches, models, GGUF files, secrets, logs, or env files. Apache-2.0 metadata applies.

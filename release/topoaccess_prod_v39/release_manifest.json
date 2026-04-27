@@ -1,0 +1,30 @@
+{
+  "artifact_audit_failures": 0,
+  "branch": "release/v1.0.0-rc1",
+  "category_gated_model": true,
+  "ci_generated": true,
+  "conformance_passed": true,
+  "contact": "MikeAnderson42@gmail.com",
+  "creator": "Michael A. Anderson",
+  "exact_lookup_tool_only": true,
+  "github_repo": "https://github.com/mikeanderson42/TopoAccess",
+  "known_limitations": [
+    "package is published in packages/topoaccess_prod layout to avoid risky path rewrites",
+    "public CI is model-free and does not validate private local model runtime"
+  ],
+  "layout": "package-subfolder",
+  "license": "Apache-2.0",
+  "nonpreferred_model_used": false,
+  "pr_created": false,
+  "pr_url": "",
+  "preferred_model": "Qwen3.6-35B-A3B-uncensored-heretic-APEX-I-Compact",
+  "public_ci_requires_model": false,
+  "public_export_path": "build/topoaccess_public_repo",
+  "push_attempted": false,
+  "push_status": "pending",
+  "secret_scan_failures": 0,
+  "tests_passed": true,
+  "unsupported_high_confidence": 0,
+  "version": "v1.0.0-rc1",
+  "wrong_high_confidence": 0
+}
