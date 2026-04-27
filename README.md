@@ -16,6 +16,7 @@ Measured local release-candidate results:
 - Wrong high-confidence answers: `0`.
 - Unsupported high-confidence answers: `0`.
 - Public CI: model-free, cache-free, GPU-free, and private-runtime-free.
+- Model posture: model-agnostic by default; optional model-backed synthesis is configured per workspace.
 
 ## How It Works
 
@@ -25,24 +26,24 @@ coding agent
   -> workspace profile
   -> TopoGraph + cache + deterministic tools
   -> category router
-  -> optional preferred model only for allowed synthesis/planning categories
+  -> optional workspace model adapter only for allowed synthesis/planning categories
   -> provenance + trace + safety counters
 ```
 
-Exact lookups, command lookups, artifact facts, and cached repo facts stay on deterministic tool routes. Model use is only allowed for category-gated tasks:
+Exact lookups, command lookups, artifact facts, and cached repo facts stay on deterministic tool routes and never require a model. Optional model-backed synthesis is only allowed for category-gated tasks:
 
 - `change_planning`
 - `model_required_narrative`
 - `report_synthesis`
 - `troubleshooting`
 
-The preferred local model remains configurable for local operators:
+TopoAccess was locally validated with this workspace model during development, but it is not a public dependency:
 
 ```text
 Qwen3.6-35B-A3B-uncensored-heretic-APEX-I-Compact
 ```
 
-Public CI does not require that model, model weights, LM Studio, Ollama, GPU access, or private cache files.
+Public CI does not require that model, model weights, LM Studio, Ollama, GPU access, or private cache files. Local model adapters are configured through workspace profiles.
 
 ## Install
 
@@ -91,7 +92,7 @@ topoaccessctl --help
 ## Safety Model
 
 - Exact lookup remains tool-only.
-- Preferred model use remains category-gated.
+- Optional model-backed synthesis remains category-gated.
 - Provenance is required for audited answers.
 - Unsupported requests should abstain instead of guessing.
 - Installers and publish helpers default to dry-run/read-only behavior.

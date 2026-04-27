@@ -6,7 +6,7 @@ It helps tools such as Codex, Claude Code, OpenClaw, Hermes, and generic shell/H
 
 ## Why It Exists
 
-Direct model use is good at unconstrained narrative phrasing, but it is weak and expensive for exact repo lookup. TopoAccess keeps exact lookup deterministic and tool-only, then uses the preferred local model only for category-gated synthesis/planning/troubleshooting tasks.
+Direct model use is good at unconstrained narrative phrasing, but it is weak and expensive for exact repo lookup. TopoAccess keeps exact lookup deterministic and tool-only, then optionally uses a workspace-configured model adapter only for category-gated synthesis/planning/troubleshooting tasks.
 
 Measured V33 canonical results:
 
@@ -23,7 +23,7 @@ Measured V33 canonical results:
 repo + reports + cache + TopoGraph
 -> deterministic exact lookup tools
 -> compact prompt/context packs
--> category-gated preferred-model fallback only where useful
+-> optional category-gated model-backed synthesis only where useful
 -> provenance-checked answer or safe abstention
 -> agent-facing CLI / HTTP / stdio tools
 ```
@@ -60,10 +60,12 @@ python packages/topoaccess_prod/scripts/topoaccess_agent.py post-edit --profile 
 
 ## Safety Model
 
-- Preferred model: `Qwen3.6-35B-A3B-uncensored-heretic-APEX-I-Compact`.
+- Model posture: model-agnostic by default.
+- Local validation model: `Qwen3.6-35B-A3B-uncensored-heretic-APEX-I-Compact`.
+- The local validation model is not a required public dependency.
 - Nonpreferred model use fails release gates.
 - Exact lookup is tool-only.
-- Preferred model fallback is category-gated for change planning, model-required narrative, report synthesis, and troubleshooting.
+- Optional model-backed synthesis is category-gated for change planning, model-required narrative, report synthesis, and troubleshooting.
 - Unsupported/no-evidence requests abstain.
 - Provenance is required for audited answers.
 

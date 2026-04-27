@@ -1,3 +1,5 @@
 version: topoaccess-prod-v1
-preferred_model: Qwen3.6-35B-A3B-uncensored-heretic-APEX-I-Compact
+model_required: false
+model_adapter: workspace_configured_optional
+local_validation_model: Qwen3.6-35B-A3B-uncensored-heretic-APEX-I-Compact
 service_backend: wrapper
