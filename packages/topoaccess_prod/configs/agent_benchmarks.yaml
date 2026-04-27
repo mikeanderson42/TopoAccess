@@ -1,0 +1,6 @@
+modes:
+  - direct_model_baseline
+  - codex_style_without_topoaccess
+  - codex_style_with_topoaccess
+  - topoaccess_tool_only
+  - topoaccess_category_gated

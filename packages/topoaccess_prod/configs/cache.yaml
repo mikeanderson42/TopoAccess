@@ -1,0 +1,2 @@
+cache_hit_rate_target: 0.902
+stale_answer_prevention_required: true

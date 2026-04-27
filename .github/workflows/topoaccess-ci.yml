@@ -1,0 +1,27 @@
+name: TopoAccess CI
+
+on:
+  push:
+    branches: ["main", "release/**"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install package
+        run: python -m pip install -U pip pytest && python -m pip install -e packages/topoaccess_prod
+      - name: Product tests
+        run: python -m pytest packages/topoaccess_prod/tests
+      - name: Import and CLI smoke
+        run: python -c "import topoaccess_prod; print(topoaccess_prod.__name__)" && topoaccessctl --help
+      - name: Compile
+        run: python -m compileall packages/topoaccess_prod
+      - name: Artifact audit
+        run: python packages/topoaccess_prod/scripts/topoaccess_artifact_audit.py --paths packages/topoaccess_prod .github --out audit.jsonl --report AUDIT.md
+      - name: Secret scan
+        run: python packages/topoaccess_prod/scripts/topoaccess_secret_scan.py --paths packages/topoaccess_prod .github --out secret_scan.jsonl --report AUDIT.md

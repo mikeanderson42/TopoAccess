@@ -1,0 +1,27 @@
+{
+  "name": "topoaccess",
+  "tools": [
+    {
+      "model_fallback_allowed": false,
+      "name": "exact_lookup",
+      "provenance_required": true
+    },
+    {
+      "model_fallback_allowed": false,
+      "name": "test_impact",
+      "provenance_required": true
+    },
+    {
+      "category_gate": "change_planning",
+      "model_fallback_allowed": true,
+      "name": "change_plan",
+      "provenance_required": true
+    },
+    {
+      "model_fallback_allowed": false,
+      "name": "post_edit_validate",
+      "provenance_required": true,
+      "read_only": true
+    }
+  ]
+}

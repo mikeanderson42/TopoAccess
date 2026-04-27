@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "command": "python packages/topoaccess_prod/scripts/topoaccess_agent.py post-edit --profile default --changed-files \"$CLAUDE_FILE\"",
+        "matcher": "Edit|Write",
+        "type": "command"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "command": "echo 'TopoAccess preflight/test-impact recommended; destructive commands are not auto-run.'",
+        "matcher": "Edit|Write|Bash",
+        "type": "command"
+      }
+    ],
+    "SessionStart": [
+      {
+        "command": "python packages/topoaccess_prod/scripts/topoaccess_agent.py workspace status --profile default",
+        "type": "command"
+      }
+    ]
+  }
+}

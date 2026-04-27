@@ -1,0 +1,5 @@
+tools:
+  exact_lookup:
+    model_fallback_allowed: false
+  change_plan:
+    model_fallback_allowed: true
