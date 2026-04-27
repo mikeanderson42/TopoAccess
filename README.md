@@ -12,11 +12,14 @@ Current public benchmark:
 
 | Metric | Result |
 | --- | ---: |
-| Rows | `10000` |
-| Assisted rows | `6666` |
-| Average assisted token savings vs broad-context baseline | `0.9462` |
-| Median assisted token savings | `0.9531` |
-| p50 / p95 latency across all modes | `131.0 ms` / `998.0 ms` |
+| Isolated row benchmark | `10,000` rows |
+| Row benchmark average assisted token savings | `0.9462` |
+| Row benchmark median assisted token savings | `0.9531` |
+| Scenario benchmark | `2,500` workflows / `44,443` steps |
+| Scenario benchmark average assisted token savings | `0.9307` |
+| Scenario benchmark median assisted token savings | `0.9397` |
+| Scenario p50 / p95 latency across all modes | `167.0 ms` / `1166.0 ms` |
+| Assisted post-edit validation pass rate | `1.0000` |
 | Wrong high-confidence answers | `0` |
 | Unsupported high-confidence answers | `0` |
 

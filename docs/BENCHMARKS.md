@@ -77,3 +77,63 @@ python packages/topoaccess_prod/scripts/topoaccess_benchmark_marathon.py \
 ## Limitations
 
 This is a deterministic public benchmark for repo-agent workflows, not a universal performance guarantee. Real savings depend on repository size, task mix, harness behavior, workspace profile quality, and whether optional model-backed synthesis is enabled for category-gated tasks. Public CI and the public benchmark remain model-free. Exact lookup never requires a model.
+
+## Real-World Fixture Scenarios
+
+V45 adds simulated public fixture scenarios that chain multiple agent steps together across small deterministic repositories. This benchmark is still model-free and fixture-based, but it better represents how users ask an agent to plan, inspect, validate, and choose commands across a workflow.
+
+- Scenario workflows: `2,500`.
+- Scenario steps: `44,443`.
+- Assisted steps: `31,745`.
+- Average assisted token savings: `0.9307`.
+- Median assisted token savings: `0.9397`.
+- p10/p90 assisted token savings: `0.8641` / `0.9664`.
+- p50/p95 latency across all modes: `167.0 ms` / `1166.0 ms`.
+- Cache hit rate on assisted steps: `0.8425`.
+- Average cache reuse count on assisted steps: `0.8491`.
+- File/test/command selection: `1.0000` / `1.0000` / `1.0000`.
+- Provenance coverage on assisted steps: `1.0000`.
+- Assisted post-edit validation pass rate: `1.0000`.
+- Stale-cache prevention on assisted post-edit validation: `1.0000`.
+- TopoAccess-assisted hallucinated files/commands: `0` / `0`.
+- Wrong high-confidence answers: `0`.
+- Unsupported high-confidence answers: `0`.
+
+Strongest simulated fixture workflows by assisted token savings:
+
+- `command_lookup_and_run`
+- `unsupported_request`
+- `artifact_trace`
+- `prompt_injection_defense`
+- `release_preparation`
+
+Weakest simulated fixture workflows:
+
+- `troubleshooting`
+- `ambiguous_request`
+- `feature_addition`
+- `test_failure_triage`
+- `docs_update`
+
+These weaker workflows still saved tokens, but they need richer context and more synthesis than deterministic exact lookup.
+
+Reproduce the scenario marathon:
+
+```bash
+python packages/topoaccess_prod/scripts/topoaccess_scenario_benchmark.py \
+  --mode build-dataset \
+  --fixtures examples/scenario_repos \
+  --out .topoaccess/scenario_dataset.jsonl \
+  --report /tmp/topoaccess_scenario_dataset.md
+
+python packages/topoaccess_prod/scripts/topoaccess_scenario_benchmark.py \
+  --dataset .topoaccess/scenario_dataset.jsonl \
+  --scenarios 2500 \
+  --fallback-scenarios 500 \
+  --chunk-size 250 \
+  --seed 20260427 \
+  --resume \
+  --out .topoaccess/scenario_benchmark.jsonl \
+  --summary .topoaccess/scenario_summary.json \
+  --report /tmp/topoaccess_scenario_report.md
+```

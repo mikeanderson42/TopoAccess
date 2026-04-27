@@ -1,0 +1,171 @@
+{
+  "assisted_post_edit_validation_pass_rate": 1.0,
+  "assisted_steps": 31745,
+  "average_cache_reuse_count": 0.8491100960781225,
+  "average_token_savings": 0.93066562923295,
+  "by_mode": {
+    "broad_context_baseline": {
+      "average_token_savings": 0.0,
+      "median_token_savings": 0.0,
+      "p50_latency_ms": 1156,
+      "p95_latency_ms": 1183,
+      "steps": 6349
+    },
+    "codex_style_with_topoaccess": {
+      "average_token_savings": 0.9257916994802331,
+      "median_token_savings": 0.9335,
+      "p50_latency_ms": 155,
+      "p95_latency_ms": 182,
+      "steps": 6349
+    },
+    "codex_style_without_topoaccess": {
+      "average_token_savings": 0.2600911482123169,
+      "median_token_savings": 0.2603,
+      "p50_latency_ms": 980,
+      "p95_latency_ms": 1008,
+      "steps": 6349
+    },
+    "http_tool_mode": {
+      "average_token_savings": 0.9315028980941881,
+      "median_token_savings": 0.9387,
+      "p50_latency_ms": 155,
+      "p95_latency_ms": 182,
+      "steps": 6349
+    },
+    "stdio_tool_mode": {
+      "average_token_savings": 0.93293080800126,
+      "median_token_savings": 0.94,
+      "p50_latency_ms": 155,
+      "p95_latency_ms": 182,
+      "steps": 6349
+    },
+    "topoaccess_category_gated": {
+      "average_token_savings": 0.9273166797920932,
+      "median_token_savings": 0.9361,
+      "p50_latency_ms": 159,
+      "p95_latency_ms": 300,
+      "steps": 6349
+    },
+    "topoaccess_tool_only": {
+      "average_token_savings": 0.9357860607969759,
+      "median_token_savings": 0.9426,
+      "p50_latency_ms": 155,
+      "p95_latency_ms": 182,
+      "steps": 6349
+    }
+  },
+  "by_workflow": {
+    "ambiguous_request": {
+      "average_token_savings": 0.9105457291666668,
+      "median_token_savings": 0.9123,
+      "p50_latency_ms": 156.0,
+      "p95_latency_ms": 181,
+      "steps": 1920
+    },
+    "artifact_trace": {
+      "average_token_savings": 0.9515786458333333,
+      "median_token_savings": 0.9564,
+      "p50_latency_ms": 155.0,
+      "p95_latency_ms": 182,
+      "steps": 2880
+    },
+    "bug_fix": {
+      "average_token_savings": 0.9257318652849741,
+      "median_token_savings": 0.9399,
+      "p50_latency_ms": 150.0,
+      "p95_latency_ms": 190,
+      "steps": 3860
+    },
+    "command_lookup_and_run": {
+      "average_token_savings": 0.9516507291666667,
+      "median_token_savings": 0.95245,
+      "p50_latency_ms": 155.0,
+      "p95_latency_ms": 186,
+      "steps": 1920
+    },
+    "docs_update": {
+      "average_token_savings": 0.9237320552677029,
+      "median_token_savings": 0.947,
+      "p50_latency_ms": 155,
+      "p95_latency_ms": 269,
+      "steps": 2895
+    },
+    "feature_addition": {
+      "average_token_savings": 0.9140091537132988,
+      "median_token_savings": 0.9326,
+      "p50_latency_ms": 156,
+      "p95_latency_ms": 280,
+      "steps": 2895
+    },
+    "post_edit_validation": {
+      "average_token_savings": 0.93958015625,
+      "median_token_savings": 0.93985,
+      "p50_latency_ms": 156.0,
+      "p95_latency_ms": 181,
+      "steps": 1920
+    },
+    "prompt_injection_defense": {
+      "average_token_savings": 0.9492521354166666,
+      "median_token_savings": 0.95,
+      "p50_latency_ms": 161.0,
+      "p95_latency_ms": 184,
+      "steps": 1920
+    },
+    "release_preparation": {
+      "average_token_savings": 0.9418828819444444,
+      "median_token_savings": 0.94685,
+      "p50_latency_ms": 155.0,
+      "p95_latency_ms": 182,
+      "steps": 2880
+    },
+    "test_failure_triage": {
+      "average_token_savings": 0.9171473229706391,
+      "median_token_savings": 0.9326,
+      "p50_latency_ms": 155,
+      "p95_latency_ms": 281,
+      "steps": 2895
+    },
+    "troubleshooting": {
+      "average_token_savings": 0.8950174479166667,
+      "median_token_savings": 0.8984,
+      "p50_latency_ms": 162.0,
+      "p95_latency_ms": 294,
+      "steps": 1920
+    },
+    "unsupported_request": {
+      "average_token_savings": 0.95163,
+      "median_token_savings": 0.9524,
+      "p50_latency_ms": 156.0,
+      "p95_latency_ms": 182,
+      "steps": 1920
+    },
+    "workspace_onboarding": {
+      "average_token_savings": 0.9346591666666666,
+      "median_token_savings": 0.93665,
+      "p50_latency_ms": 158.0,
+      "p95_latency_ms": 182,
+      "steps": 1920
+    }
+  },
+  "cache_hit_rate": 0.8424948810836352,
+  "command_correctness": 1.0,
+  "file_selection_accuracy": 1.0,
+  "hallucinated_command_count": 4188,
+  "hallucinated_file_count": 4084,
+  "median_token_savings": 0.9397,
+  "p10_token_savings": 0.8641,
+  "p50_latency_ms": 167,
+  "p90_token_savings": 0.9664,
+  "p95_latency_ms": 1166,
+  "post_edit_validation_pass_rate": 0.7142857142857143,
+  "provenance_coverage": 1.0,
+  "scenario_workflows": 2500,
+  "stale_cache_prevention_rate": 1.0,
+  "steps": 44443,
+  "test_selection_recall": 1.0,
+  "topoaccess_hallucinated_command_count": 0,
+  "topoaccess_hallucinated_file_count": 0,
+  "unsupported_correct_rate": 0.7142857142857143,
+  "unsupported_high_confidence": 0,
+  "wrong_high_confidence": 0
+}

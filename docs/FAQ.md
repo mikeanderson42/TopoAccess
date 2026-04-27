@@ -24,6 +24,10 @@ No. It gives coding agents compact, provenance-backed repo context so they can s
 
 Exact tool routing, compact context packs, cache-aware repo metadata, and deterministic unsupported/ambiguous handling. In the current public benchmark, assisted modes averaged `0.9462` token savings vs the broad-context baseline.
 
+## What changed in the scenario benchmark?
+
+The scenario benchmark chains multiple steps across fixture repos, including planning, lookup, command choice, post-edit validation, release checks, and unsupported/prompt-injection handling. In the simulated public fixture scenarios, assisted modes averaged `0.9307` token savings with `1.0000` assisted post-edit validation pass rate.
+
 ## What repos benefit most?
 
 Repos with meaningful tests, scripts, docs, release workflows, and repeated exact lookup questions tend to benefit most. Very small repos may see smaller absolute savings.
