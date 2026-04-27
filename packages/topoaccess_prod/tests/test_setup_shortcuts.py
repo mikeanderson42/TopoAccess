@@ -21,3 +21,12 @@ def test_topoaccess_setup_aliases(capsys):
     assert main(["setup", "claude", "--profile", "demo", "--dry-run"]) == 0
     out = capsys.readouterr().out
     assert "claude-code" in out
+
+
+def test_setup_supports_all_public_targets(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    for target in ["codex", "claude", "cursor", "aider", "openclaw", "openhands", "hermes", "generic", "http", "stdio"]:
+        result = run_setup_shortcut(target, "demo")
+        assert result["result_status"] == "pass"
+        assert result["external_configs_modified"] is False
+        assert "test_command" in result

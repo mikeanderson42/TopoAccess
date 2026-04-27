@@ -60,6 +60,13 @@ topoaccess post-edit \
   --changed-files packages/topoaccess_prod/README.md
 ```
 
+Preview harness setup without modifying external configs:
+
+```bash
+topoaccess setup codex --profile demo --dry-run
+topoaccess setup generic --profile demo --dry-run
+```
+
 If a console entrypoint is unavailable while debugging packaging, use the legacy script fallback:
 
 ```bash

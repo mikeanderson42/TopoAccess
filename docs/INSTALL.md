@@ -19,6 +19,13 @@ topoaccess try
 
 `topoaccess init` creates `.topoaccess/cache` and a demo workspace profile. `topoaccess try` runs a self-contained model-free demo.
 
+Setup shortcuts are optional and dry-run by default:
+
+```bash
+topoaccess setup codex --profile demo --dry-run
+topoaccess setup generic --profile demo --dry-run
+```
+
 If the console entrypoint is unavailable while debugging an editable install, use the legacy script fallback:
 
 ```bash

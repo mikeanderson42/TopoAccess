@@ -8,4 +8,5 @@ def test_docs_show_30_second_quickstart_and_legacy_fallback():
     assert "topoaccess init" in readme
     assert "topoaccess try" in readme
     assert "topoaccess setup codex" in commands
+    assert "topoaccess setup openclaw" in commands
     assert "python packages/topoaccess_prod/scripts/topoaccess_agent.py codex-brief" in quickstart
