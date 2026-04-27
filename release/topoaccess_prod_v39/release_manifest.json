@@ -5,7 +5,7 @@
   "pr_safe_export_path": "build/topoaccess_public_repo_pr",
   "branch": "release/v1.0.0-rc1-public",
   "superseded_orphan_branch": "release/v1.0.0-rc1",
-  "commit": "9210d0d432dcead32e5db599573daae0ec8a8337",
+  "commit": "a22d7de",
   "creator": "Michael A. Anderson",
   "contact": "MikeAnderson42@gmail.com",
   "license": "Apache-2.0",
