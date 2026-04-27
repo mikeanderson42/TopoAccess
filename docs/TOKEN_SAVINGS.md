@@ -10,13 +10,25 @@ TopoAccess saves tokens by avoiding broad repo dumps for deterministic questions
 - Exact lookup remained tool-only; public CI and public benchmark paths do not require local model weights.
 - Wrong high-confidence and unsupported high-confidence counts were 0 and 0.
 
+## Real-World Fixture Scenarios
+
+The V45 scenario benchmark runs simulated multi-step agent workflows over small public fixture repos. In that benchmark:
+
+- Scenario workflows: `2,500`.
+- Scenario steps: `44,443`.
+- Average assisted token savings: `0.9307`.
+- Median assisted token savings: `0.9397`.
+- Cache hit rate on assisted steps: `0.8425`.
+- Assisted post-edit validation pass rate: `1.0000`.
+- TopoAccess-assisted hallucinated files/commands: `0` / `0`.
+
 Savings formula:
 
 ```text
 token_savings = 1 - (topoaccess_tokens / direct_model_tokens)
 ```
 
-The largest gains usually come from exact lookup, command lookup, artifact/report facts, and post-edit validation because these can use targeted repo artifacts instead of broad context. Change planning and troubleshooting save less because they may need richer synthesis, but model use remains optional and category-gated.
+The largest gains usually come from exact lookup, command lookup, artifact/report facts, unsupported handling, and post-edit validation because these can use targeted repo artifacts instead of broad context. Change planning and troubleshooting save less because they may need richer synthesis, but model use remains optional and category-gated.
 
 ## Practical Interpretation
 

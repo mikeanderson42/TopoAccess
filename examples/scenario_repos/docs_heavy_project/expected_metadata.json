@@ -1,0 +1,5 @@
+{
+  "expected_commands": ["python -m pytest tests"],
+  "expected_files": ["docs/quickstart.md", "src/docs_app/render.py"],
+  "expected_tests": ["tests/test_render.py"]
+}

@@ -1,0 +1,5 @@
+{
+  "expected_commands": ["bash scripts/release_check.sh"],
+  "expected_files": ["src/release_tool/version.py", "scripts/release_check.sh", "docs/release.md"],
+  "expected_tests": ["tests/test_version.py"]
+}

@@ -1,0 +1,5 @@
+{
+  "expected_commands": ["python -m pytest tests/test_divide.py"],
+  "expected_files": ["src/calc/divide.py", "tests/test_divide.py"],
+  "expected_tests": ["tests/test_divide.py"]
+}

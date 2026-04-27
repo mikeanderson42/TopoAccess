@@ -1,0 +1,5 @@
+{
+  "expected_commands": ["bash scripts/audit_artifacts.sh"],
+  "expected_files": ["src/artifacts/manifest.py", "docs/results.md", "docs/data_dictionary.md"],
+  "expected_tests": ["tests/test_manifest.py"]
+}

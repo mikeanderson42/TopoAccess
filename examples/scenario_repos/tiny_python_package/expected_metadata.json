@@ -1,0 +1,5 @@
+{
+  "expected_commands": ["python -m pytest tests"],
+  "expected_files": ["src/tiny_pkg/math_utils.py", "tests/test_math_utils.py"],
+  "expected_tests": ["tests/test_math_utils.py"]
+}
