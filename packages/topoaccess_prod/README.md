@@ -8,11 +8,10 @@ It helps tools such as Codex, Claude Code, OpenClaw, Hermes, and generic shell/H
 
 Direct model use is good at unconstrained narrative phrasing, but it is weak and expensive for exact repo lookup. TopoAccess keeps exact lookup deterministic and tool-only, then optionally uses a workspace-configured model adapter only for category-gated synthesis/planning/troubleshooting tasks.
 
-Measured V33 canonical results:
+Current public release-candidate benchmark:
 
-- Canonical benchmark rows: `500`.
-- Canonical token savings: `0.9526` from the V32/V33 JSONL ledger.
-- Real agent soak: `1000` fallback tasks.
+- Benchmark rows: `250`.
+- Average token savings vs broad-context baseline: `0.9500`.
 - Nonpreferred model used: `false`.
 - Wrong high-confidence: `0`.
 - Unsupported high-confidence: `0`.
@@ -34,7 +33,7 @@ TopoAccess is not a replacement for coding agents. It is a repo-intelligence lay
 
 ```bash
 python packages/topoaccess_prod/scripts/topoaccess_workspace.py init --profile default --repo . --cache cache/topoaccess_v21 --preferred-search runs/topoaccess_v22/preferred_model_search.jsonl
-python packages/topoaccess_prod/scripts/topoaccess_doctor.py --profile default --out runs/topoaccess_prod_v33/doctor.jsonl --report REPORT_topoaccess_prod_v33_installers.md
+python packages/topoaccess_prod/scripts/topoaccess_doctor.py --profile default
 python packages/topoaccess_prod/scripts/topoaccess_agent.py codex-brief --profile default --task "Improve exact command lookup resolver"
 ```
 

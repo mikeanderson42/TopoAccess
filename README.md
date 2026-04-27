@@ -8,10 +8,10 @@ It helps tools like Codex, Claude Code, Cursor, Aider, OpenClaw, OpenHands, Herm
 
 Coding agents are strongest when they have the right context and weakest when they must rediscover repo structure from scratch. TopoAccess reduces that rediscovery cost by routing exact repository work through deterministic tools, TopoGraph/cache indexes, and small prompt packs.
 
-Measured local release-candidate results:
+Current public release-candidate benchmark:
 
-- Codex dogfood savings: `0.9332` average token savings across 250 V38 tasks.
-- Harness token savings: about `0.9553` average across harness/category checks.
+- Benchmark rows: `250`.
+- Average token savings vs broad-context baseline: `0.9500`.
 - Exact lookup: tool-only, no model fallback.
 - Wrong high-confidence answers: `0`.
 - Unsupported high-confidence answers: `0`.
@@ -112,7 +112,10 @@ topoaccessctl --help
 - [Quickstart](docs/QUICKSTART.md)
 - [How It Works](docs/HOW_IT_WORKS.md)
 - [Harness Integration](docs/HARNESS_INTEGRATION.md)
+- [Benchmarks](docs/BENCHMARKS.md)
 - [Token Savings](docs/TOKEN_SAVINGS.md)
+- [Model-Agnostic Design](docs/MODEL_AGNOSTIC.md)
+- [FAQ](docs/FAQ.md)
 - [Safety](docs/SAFETY.md)
 - [API](docs/API.md)
 - [Development](docs/DEVELOPMENT.md)
