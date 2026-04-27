@@ -46,3 +46,7 @@ python packages/topoaccess_prod/scripts/topoaccess_roi.py \
   --tokens-per-task 20000 \
   --savings 0.9307
 ```
+
+## Which CLI should I use?
+
+Use `topoaccess` for public workflows. `topoaccessctl` and `python packages/topoaccess_prod/scripts/*.py` remain available for compatibility and advanced debugging.

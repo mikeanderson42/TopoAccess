@@ -70,14 +70,9 @@ These workflows still saved tokens, but they require more context and synthesis 
 ## Reproduce
 
 ```bash
-python packages/topoaccess_prod/scripts/topoaccess_scenario_benchmark.py \
-  --mode build-dataset \
-  --fixtures examples/scenario_repos \
-  --out .topoaccess/scenario_dataset.jsonl \
-  --report /tmp/topoaccess_scenario_dataset.md
-
-python packages/topoaccess_prod/scripts/topoaccess_scenario_benchmark.py \
+topoaccess benchmark scenario \
   --dataset .topoaccess/scenario_dataset.jsonl \
+  --fixtures examples/scenario_repos \
   --scenarios 2500 \
   --fallback-scenarios 500 \
   --chunk-size 250 \

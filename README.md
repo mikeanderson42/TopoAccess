@@ -56,6 +56,7 @@ Public CI does not require a model, model weights, LM Studio, Ollama, GPU access
 git clone https://github.com/mikeanderson42/TopoAccess.git
 cd TopoAccess
 python -m pip install -e packages/topoaccess_prod
+topoaccess --help
 topoaccessctl --help
 ```
 
@@ -64,18 +65,18 @@ topoaccessctl --help
 This path is designed for a fresh clone. It does not require Qwen, LM Studio, Ollama, GPU access, private caches, or model files.
 
 ```bash
-python packages/topoaccess_prod/scripts/topoaccess_workspace.py init \
+topoaccess workspace init \
   --profile demo \
   --repo . \
   --cache .topoaccess/cache
 
-python packages/topoaccess_prod/scripts/topoaccess_doctor.py --profile demo
+topoaccess doctor --profile demo
 
-python packages/topoaccess_prod/scripts/topoaccess_agent.py codex-brief \
+topoaccess codex-brief \
   --profile demo \
   --task "What tests should I run after editing README.md?"
 
-python packages/topoaccess_prod/scripts/topoaccess_agent.py post-edit \
+topoaccess post-edit \
   --profile demo \
   --changed-files packages/topoaccess_prod/README.md
 ```
@@ -84,6 +85,7 @@ For a model-free public smoke test:
 
 ```bash
 python -m pytest packages/topoaccess_prod/tests
+topoaccess --help
 topoaccessctl --help
 ```
 
@@ -138,6 +140,8 @@ Sponsorship supports public benchmarks, docs, harness integrations, fixture main
 - [Harness Integration](docs/HARNESS_INTEGRATION.md)
 - [Benchmarks](docs/BENCHMARKS.md)
 - [Token Savings](docs/TOKEN_SAVINGS.md)
+- [Commands](docs/COMMANDS.md)
+- [Migration](docs/MIGRATION.md)
 - [ROI Calculator](docs/ROI.md)
 - [Use Cases](docs/USE_CASES.md)
 - [Public Claims](docs/CLAIMS.md)
