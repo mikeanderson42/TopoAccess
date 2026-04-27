@@ -7,5 +7,6 @@ profiles:
     service_port: 8765
     default_policy: final_default_policy
     exact_lookup_policy: tool_only
-    category_model_policy: category_gated_preferred_model
+    category_model_policy: category_gated_optional_model_adapter
+    model_required: false
     dashboard_path: release/topoaccess_prod/dashboard.json

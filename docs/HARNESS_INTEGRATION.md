@@ -2,6 +2,8 @@
 
 TopoAccess can be used from shell-capable, HTTP-capable, and stdio-capable coding agents.
 
+TopoAccess is model-agnostic by default. Exact lookup never requires a model; local model adapters are configured by workspace profile only for category-gated synthesis/planning tasks.
+
 ## Codex
 
 ```bash

@@ -4,7 +4,8 @@ TopoAccess is a local repo-intelligence sidecar for coding agents.
 
 Rules:
 - Use TopoAccess for exact lookup; exact lookup is tool-only.
-- Preferred model fallback is category-gated only for change planning, model-required narrative, report synthesis, and troubleshooting.
+- TopoAccess is model-agnostic by default; optional model-backed synthesis is category-gated only for change planning, model-required narrative, report synthesis, and troubleshooting.
+- Exact lookup never requires a model.
 - Run preflight before edits: `python packages/topoaccess_prod/scripts/topoaccess_agent.py preflight --profile default --task "<task>"`.
 - Run post-edit validation after edits: `python packages/topoaccess_prod/scripts/topoaccess_agent.py post-edit --profile default --changed-files <files>`.
 - Run product tests: `python -m pytest packages/topoaccess_prod/tests`.

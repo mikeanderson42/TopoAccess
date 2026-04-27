@@ -2,6 +2,8 @@
 
 TopoAccess saves tokens by avoiding broad repo dumps for deterministic questions.
 
+It is model-agnostic by default. Exact lookup, command lookup, and artifact/report facts use deterministic routes rather than model calls.
+
 Release-candidate reference points:
 
 - Codex dogfood savings: `0.9332` average across 250 V38 tasks.

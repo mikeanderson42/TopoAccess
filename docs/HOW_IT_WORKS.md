@@ -6,11 +6,11 @@ TopoAccess sits beside a coding agent and answers repo-intelligence questions th
 agent -> CLI/HTTP/stdio -> workspace profile -> tools/cache/router -> provenance/trace
 ```
 
-Exact repo facts stay tool-only. The preferred model is only allowed for category-gated synthesis/planning tasks:
+Exact repo facts stay tool-only and never require a model. Optional model-backed synthesis is only allowed for category-gated synthesis/planning tasks:
 
 - `change_planning`
 - `model_required_narrative`
 - `report_synthesis`
 - `troubleshooting`
 
-This keeps exact lookup, command lookup, artifact lookup, and report facts from becoming broad model-context prompts. Public CI exercises this deterministic surface without requiring private model files.
+This keeps exact lookup, command lookup, artifact lookup, and report facts from becoming broad model-context prompts. Public CI exercises this deterministic surface without requiring private model files, LM Studio, Ollama, GPU access, or private caches.

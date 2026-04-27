@@ -1,5 +1,6 @@
 exact_lookup_policy: tool_only
-model_fallback_categories:
+model_required: false
+model_backed_synthesis_categories:
   - change_planning
   - model_required_narrative
   - report_synthesis
