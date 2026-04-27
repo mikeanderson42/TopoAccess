@@ -1,0 +1,33 @@
+{
+  "rows": 250,
+  "modes": [
+    "direct_model_baseline",
+    "codex_style_without_topoaccess",
+    "codex_style_with_topoaccess",
+    "topoaccess_tool_only",
+    "topoaccess_category_gated"
+  ],
+  "task_families": [
+    "exact_lookup",
+    "test_impact",
+    "command_lookup",
+    "report_fact",
+    "change_planning",
+    "troubleshooting",
+    "post_edit_validation",
+    "unsupported",
+    "trace_explanation"
+  ],
+  "baseline_token_estimate": 18000,
+  "topoaccess_token_estimate": 900,
+  "average_token_savings": 0.95,
+  "exact_lookup_tool_only": true,
+  "nonpreferred_model_used": false,
+  "wrong_high_confidence": 0,
+  "unsupported_high_confidence": 0,
+  "limitations": [
+    "simulated public package benchmark",
+    "real results depend on repository size, task mix, workspace profile quality, and harness behavior",
+    "public CI remains model-free"
+  ]
+}

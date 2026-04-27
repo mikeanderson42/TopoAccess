@@ -16,7 +16,7 @@ def _base_row(phase: str, command: str, artifact: str = "") -> dict:
     commit = subprocess.run(["git", "log", "-1", "--format=%h"], text=True, capture_output=True).stdout.strip()
     remote = subprocess.run(["git", "remote", "-v"], text=True, capture_output=True).stdout.strip()
     return {
-        "run_id": f"v38_{phase}",
+        "run_id": f"current_{phase}",
         "phase": phase,
         "command": command,
         "branch": branch,
@@ -46,7 +46,8 @@ def _base_row(phase: str, command: str, artifact: str = "") -> dict:
 
 def fallback_archive(package: Path, out_dir: Path) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
-    archive = out_dir / "topoaccess-prod-v38-source-fallback.tar.gz"
+    release_name = out_dir.parent.name if out_dir.parent.name.startswith("topoaccess_prod_") else "topoaccess_prod_current"
+    archive = out_dir / f"{release_name}-source-fallback.tar.gz"
     with tarfile.open(archive, "w:gz") as tar:
         for child in package.iterdir():
             if child.name in SAFE_DIRS or child.name in SAFE_FILES:
@@ -70,10 +71,11 @@ def build_distribution(package: str, out: str, report: str) -> list[dict]:
         row = _base_row("dist_build", " ".join(build_cmd), ",".join(built))
         row.update({"wheel_built": any(path.endswith(".whl") for path in built), "sdist_built": any(path.endswith(".tar.gz") for path in built), "fallback_archive": False})
     rows.append(row)
-    Path("runs/topoaccess_prod_v38").mkdir(parents=True, exist_ok=True)
-    Path("runs/topoaccess_prod_v38/dist_build.jsonl").write_text("\n".join(json.dumps(r, sort_keys=True) for r in rows) + "\n", encoding="utf-8")
+    run_dir = Path("runs") / (out_dir.parent.name if out_dir.parent.name.startswith("topoaccess_prod_") else "topoaccess_prod_current")
+    run_dir.mkdir(parents=True, exist_ok=True)
+    (run_dir / "dist_build.jsonl").write_text("\n".join(json.dumps(r, sort_keys=True) for r in rows) + "\n", encoding="utf-8")
     Path(report).write_text(
-        "# V38 Distribution Build\n\n"
+        "# Distribution Build\n\n"
         f"- Wheel built: `{row['wheel_built']}`\n"
         f"- sdist built: `{row['sdist_built']}`\n"
         f"- Fallback archive: `{row['fallback_archive']}`\n"
@@ -81,4 +83,3 @@ def build_distribution(package: str, out: str, report: str) -> list[dict]:
         encoding="utf-8",
     )
     return rows
-
