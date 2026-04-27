@@ -127,8 +127,8 @@ TopoAccess is built and maintained by Michael A. Anderson.
 
 If it saves you tokens, time, or debugging effort, consider sponsoring development:
 
-- GitHub Sponsors: `mikeanderson42`
-- Buy Me a Coffee: add a custom URL after account setup
+- GitHub Sponsors: `mikeanderson42` - Waiting on Acct Validation
+- Buy Me a Coffee: Link Coming Shortly
 
 Sponsorship supports public benchmarks, docs, harness integrations, fixture maintenance, and release hygiene. There are no paid-only code paths.
 
