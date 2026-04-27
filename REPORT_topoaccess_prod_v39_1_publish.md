@@ -4,12 +4,16 @@ Target PR: https://github.com/mikeanderson42/TopoAccess/pull/1
 
 Target branch: `release/v1.0.0-rc1-public`
 
-## Planned Commit
+## Follow-Up Commit
 
 ```bash
 git commit -m "Fix public CI and polish TopoAccess rc1"
 git push origin release/v1.0.0-rc1-public
 ```
+
+Push status: success.
+
+Commit: `e587132`
 
 ## Release Assets
 

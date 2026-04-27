@@ -13,7 +13,7 @@ Initial observed blocker: GitHub Actions `TopoAccess CI / test` fails because `t
 - README improved: yes.
 - Release asset instructions generated: yes.
 - Branch protection guidance generated: yes.
-- Follow-up commit pushed to PR #1: pending final push step.
+- Follow-up commit pushed to PR #1: yes, commit `e587132`.
 
 ## Branch Protection Setting
 
