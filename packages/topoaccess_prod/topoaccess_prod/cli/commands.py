@@ -64,6 +64,9 @@ def cmd_doctor(args: object) -> int:
 
 
 def cmd_query(args: object) -> int:
+    if not str(args.query).strip():
+        print_json({"status": "fail", "error": "query must be a non-empty string"})
+        return 2
     result = run_command("query", cache=args.cache, release=args.release, query=args.query, why=args.why, audit=args.audit)
     print_json(result)
     return 0 if result["status"] == "pass" else 1

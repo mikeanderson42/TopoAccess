@@ -30,7 +30,13 @@ The scenario benchmark chains multiple steps across fixture repos, including pla
 
 ## What changed in the external-style benchmark?
 
-The external-style benchmark uses more varied public-safe fixtures that mimic a monorepo, API service, docs portal, release pipeline, and data artifact repo. Assisted modes averaged `0.9109` token savings across `1,000` scenarios, with zero wrong or unsupported high-confidence failures. It is intentionally fixture-based and not a universal production guarantee.
+The external-style benchmark uses more varied public-safe fixtures that mimic a monorepo, API service, docs portal, release pipeline, and data artifact repo. Assisted modes averaged `0.9109` token savings across `1,000` scenarios, with zero wrong or unsupported high-confidence failures. It is intentionally fixture-based and not a substitute for measuring your own repository.
+
+## Did you test adversarial cases?
+
+Yes, within the public fixture suite. The current robustness gauntlet ran `23,024` model-free rows across CLI fuzzing, schema fuzzing, cache chaos, fixture mutation, adversarial scenarios, and performance guards. It found one real CLI validation issue during development: empty `topoaccess query --query ""` inputs now return a nonzero validation error. The rerun had `0` failures, `0` exact-lookup model invocations, and `0` wrong or unsupported high-confidence failures.
+
+This is regression evidence for the fixture suite, not a substitute for measuring your own repository.
 
 ## What repos benefit most?
 
