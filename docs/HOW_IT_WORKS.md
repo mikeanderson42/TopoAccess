@@ -1,3 +1,16 @@
 # How It Works
 
-TopoAccess routes repo questions through deterministic tools, TopoGraph/cache indexes, and category-gated synthesis.
+TopoAccess sits beside a coding agent and answers repo-intelligence questions through deterministic tools, cache metadata, TopoGraph-style indexes, and compact prompt packs.
+
+```text
+agent -> CLI/HTTP/stdio -> workspace profile -> tools/cache/router -> provenance/trace
+```
+
+Exact repo facts stay tool-only. The preferred model is only allowed for category-gated synthesis/planning tasks:
+
+- `change_planning`
+- `model_required_narrative`
+- `report_synthesis`
+- `troubleshooting`
+
+This keeps exact lookup, command lookup, artifact lookup, and report facts from becoming broad model-context prompts. Public CI exercises this deterministic surface without requiring private model files.

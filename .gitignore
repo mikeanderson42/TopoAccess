@@ -4,7 +4,9 @@ __pycache__/
 *.egg-info/
 build/
 dist/
-cache/
+/cache/
+!/packages/topoaccess_prod/topoaccess_prod/cache/
+!/packages/topoaccess_prod/topoaccess_prod/cache/*.py
 runs/
 logs/
 .env
