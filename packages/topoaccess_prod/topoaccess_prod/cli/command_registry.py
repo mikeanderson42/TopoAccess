@@ -33,6 +33,7 @@ COMMANDS: dict[str, CommandInfo] = {
     "audit": CommandInfo("audit", "Run artifact audit checks.", "validation", legacy_equivalent="topoaccess_artifact_audit.py"),
     "secret-scan": CommandInfo("secret-scan", "Run secret scan checks.", "validation", legacy_equivalent="topoaccess_secret_scan.py"),
     "self-check": CommandInfo("self-check", "Run package self-check through topoaccessctl.", "validation", legacy_equivalent="topoaccessctl.py self-check"),
+    "verify-provenance": CommandInfo("verify-provenance", "Create and verify a span-hash provenance entry for a file span.", "validation"),
 }
 
 

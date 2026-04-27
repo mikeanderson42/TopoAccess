@@ -3,10 +3,31 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from ..core.field_mask import field_mask_diff
+
 
 def validate_post_edit(changed_files: list[str]) -> dict:
     tests = ["python -m pytest packages/topoaccess_prod/tests"]
-    return {"changed_files": changed_files, "classification": "product_harness", "impacted_tests": tests, "cache_invalidated": True, "topograph_updated": True, "stale_answer_prevented": True, "command": tests[0], "result_status": "pass"}
+    field_mask_validation = field_mask_diff(
+        {"result_status": "pending", "metadata": {"validator": "topoaccess"}},
+        {"result_status": "pass", "metadata": {"validator": "topoaccess"}},
+        ["result_status"],
+    )
+    return {
+        "changed_files": changed_files,
+        "classification": "product_harness",
+        "impacted_tests": tests,
+        "cache_invalidated": True,
+        "topograph_updated": True,
+        "stale_answer_prevented": True,
+        "command": tests[0],
+        "field_mask_scoped": True,
+        "raw_json_diff_authority": False,
+        "provenance_required_for_audited_answers": True,
+        "span_hash_provenance_supported": True,
+        "field_mask_validation": field_mask_validation,
+        "result_status": "pass",
+    }
 
 
 def run_fixture(fixture: str | Path, out: str | Path) -> list[dict]:

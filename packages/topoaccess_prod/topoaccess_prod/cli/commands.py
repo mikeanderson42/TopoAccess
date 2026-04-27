@@ -199,3 +199,12 @@ def cmd_self_check(args: object) -> int:
     result = run_command("self-check", cache=args.cache, release=args.release)
     print_json(result)
     return 0 if result["status"] == "pass" else 1
+
+
+def cmd_verify_provenance(args: object) -> int:
+    from ..core.provenance import make_span_provenance, verify_span_provenance
+
+    entry = make_span_provenance(args.path, args.start_line, args.end_line)
+    verification = verify_span_provenance(entry)
+    print_json({"provenance_entry": entry, "verification": verification})
+    return 0 if verification["result_status"] == "pass" else 1

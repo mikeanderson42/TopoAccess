@@ -34,6 +34,9 @@ Summary:
 - Prompt-injection, ambiguous request, missing-file, renamed-file, stale-docs, conflicting-command, and duplicate-symbol scenarios.
 - Tool-schema, HTTP-like, and stdio-like malformed payloads.
 - Mutation-style fixture changes that should trigger post-edit validation or uncertainty.
+- Span-hash provenance checks that reject stale cited regions when audit-grade verification is required, while allowing exactly one moved matching span to pass with `location_changed=true`.
+- Duplicate matching span locations force reaudit instead of choosing an arbitrary source location.
+- Field-mask scoped diff checks that reject unauthorized payload changes without treating raw JSON equality as the sole authority.
 
 ## What Changed
 
@@ -44,3 +47,5 @@ The gauntlet found one real CLI validation issue during development: `topoaccess
 These are public fixture tests, not evidence of universal behavior on every repository. Real-world results still depend on repository structure, command conventions, test coverage, cache freshness, and external harness versions.
 
 TopoAccess remains model-agnostic by default. Public robustness checks do not require Qwen, LM Studio, Ollama, GPU access, private caches, or model weights.
+
+Span-hash provenance is evidence for the inspected file span at verification time, not a claim that a repository fact is universally or permanently true. Agent-facing provenance uses bounded excerpts only; full raw audited span text is not emitted by default. If a file changes and a span cannot be uniquely reidentified by hash, affected span hashes must be regenerated.

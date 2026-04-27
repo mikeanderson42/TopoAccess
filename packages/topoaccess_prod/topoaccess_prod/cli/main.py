@@ -143,6 +143,12 @@ def build_parser() -> argparse.ArgumentParser:
     self_check.add_argument("--release", default="release/topoaccess_prod")
     self_check.set_defaults(handler=commands.cmd_self_check)
 
+    verify = sub.add_parser("verify-provenance", help="Create and verify span-hash provenance for a file span.")
+    verify.add_argument("--path", required=True)
+    verify.add_argument("--start-line", type=int, required=True)
+    verify.add_argument("--end-line", type=int, required=True)
+    verify.set_defaults(handler=commands.cmd_verify_provenance)
+
     return parser
 
 
