@@ -5,7 +5,7 @@ TopoAccess is Apache-2.0, local-first, and model-agnostic by default. Sponsorshi
 ## Current Funding Setup
 
 - GitHub Sponsors: `mikeanderson42`
-- Buy Me a Coffee: TODO after account setup. Do not invent or publish a custom URL until it exists.
+- Buy Me a Coffee: [buymeacoffee.com/mikeanderson42](https://buymeacoffee.com/mikeanderson42)
 
 ## Suggested Sponsor Tiers
 

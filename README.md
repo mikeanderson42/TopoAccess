@@ -25,6 +25,9 @@ Current public benchmark:
 | Adversarial gauntlet failures | `0` |
 | Exact-lookup model invocations in gauntlet | `0` |
 | Assisted post-edit validation pass rate | `1.0000` |
+| Latest product test pass | `97 tests` |
+| Latest conformance pass | `8 checks / 0 failures` |
+| Latest artifact and secret scans | `499 files / 0 failures each` |
 | Wrong high-confidence answers | `0` |
 | Unsupported high-confidence answers | `0` |
 
@@ -132,7 +135,7 @@ TopoAccess is built and maintained by Michael A. Anderson.
 If it saves you tokens, time, or debugging effort, consider sponsoring development:
 
 - GitHub Sponsors: `mikeanderson42` - Waiting on Acct Validation
-- Buy Me a Coffee: Link Coming Shortly
+- [Buy Me a Coffee](https://buymeacoffee.com/mikeanderson42)
 
 Sponsorship supports public benchmarks, docs, harness integrations, fixture maintenance, and release hygiene. There are no paid-only code paths.
 
