@@ -1,0 +1,6 @@
+{
+  "broad_context_tokens": 76000,
+  "expected_files": ["src/version.py", "docs/changelog.md", "scripts/release_check.sh"],
+  "expected_tests": ["tests/test_version.py"],
+  "expected_commands": ["python -m pytest tests/test_version.py", "bash scripts/release_check.sh"]
+}

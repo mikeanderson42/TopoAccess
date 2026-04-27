@@ -1,0 +1,6 @@
+{
+  "broad_context_tokens": 82000,
+  "expected_files": ["src/api.py", "src/worker.py", "docs/architecture.md"],
+  "expected_tests": ["tests/test_api.py", "tests/test_worker.py"],
+  "expected_commands": ["python -m pytest tests", "bash scripts/release_check.sh"]
+}

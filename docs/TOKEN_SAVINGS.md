@@ -30,6 +30,27 @@ token_savings = 1 - (topoaccess_tokens / direct_model_tokens)
 
 The largest gains usually come from exact lookup, command lookup, artifact/report facts, unsupported handling, and post-edit validation because these can use targeted repo artifacts instead of broad context. Change planning and troubleshooting save less because they may need richer synthesis, but model use remains optional and category-gated.
 
+## External-Style Fixture Benchmark
+
+The V46 external-style fixture benchmark is more conservative than the V45 scenario suite:
+
+- Scenarios: `1,000`.
+- Rows: `7,000`.
+- Average assisted token savings: `0.9109`.
+- Median assisted token savings: `0.9098`.
+- p50/p95 latency: `262.0 ms` / `1282.0 ms`.
+- Assisted hallucinated files/commands: `0` / `0`.
+- Wrong/unsupported high-confidence: `0` / `0`.
+
+Use this as a sanity check for more varied repo shapes. Use the ROI calculator to substitute your own task count, token baseline, and pricing assumptions:
+
+```bash
+python packages/topoaccess_prod/scripts/topoaccess_roi.py \
+  --tasks-per-day 100 \
+  --tokens-per-task 20000 \
+  --savings 0.9109
+```
+
 ## Practical Interpretation
 
 For repeated coding-agent sessions, savings compound when agents ask many exact repo questions before editing. Larger repositories with tests, scripts, docs, and release workflows tend to benefit more than tiny repositories.

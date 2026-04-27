@@ -1,0 +1,6 @@
+{
+  "broad_context_tokens": 69000,
+  "expected_files": ["src/manifest.py", "docs/data_dictionary.md", "docs/results.md"],
+  "expected_tests": ["tests/test_manifest.py"],
+  "expected_commands": ["python -m pytest tests/test_manifest.py", "bash scripts/audit_artifacts.sh"]
+}

@@ -1,0 +1,6 @@
+{
+  "broad_context_tokens": 64000,
+  "expected_files": ["src/service.py", "docs/openapi.md"],
+  "expected_tests": ["tests/test_service.py"],
+  "expected_commands": ["python -m pytest tests/test_service.py"]
+}

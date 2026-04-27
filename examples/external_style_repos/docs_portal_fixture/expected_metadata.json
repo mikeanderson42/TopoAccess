@@ -1,0 +1,6 @@
+{
+  "broad_context_tokens": 58000,
+  "expected_files": ["docs/current_install.md", "docs/stale_install.md", "src/render.py"],
+  "expected_tests": ["tests/test_render.py"],
+  "expected_commands": ["python -m pytest tests/test_render.py", "bash scripts/docs_lint.sh"]
+}

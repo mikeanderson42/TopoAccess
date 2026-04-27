@@ -19,6 +19,8 @@ Current public benchmark:
 | Scenario benchmark average assisted token savings | `0.9307` |
 | Scenario benchmark median assisted token savings | `0.9397` |
 | Scenario p50 / p95 latency across all modes | `167.0 ms` / `1166.0 ms` |
+| External-style fixture benchmark | `1,000` scenarios / `7,000` rows |
+| External-style average assisted token savings | `0.9109` |
 | Assisted post-edit validation pass rate | `1.0000` |
 | Wrong high-confidence answers | `0` |
 | Unsupported high-confidence answers | `0` |
@@ -109,6 +111,13 @@ topoaccessctl --help
 - External harness behavior depends on installed tool versions.
 - Private local caches/models are intentionally not included in this public repo.
 - Public CI validates deterministic/package behavior, not private model-backed local runtime quality.
+- Benchmarks are public fixture workloads. Real savings depend on repository size, task mix, harness behavior, and how often agents ask exact repo questions.
+
+## Best Fit
+
+TopoAccess is best for teams or solo builders who repeatedly ask coding agents for repo facts, impacted tests, command lookup, release checks, post-edit validation, and compact change-planning briefs.
+
+It is not a good fit if your repo is tiny, rarely changes, has no tests/scripts/docs to index, or if you want a cloud agent or paid-only hosted workflow. TopoAccess stays local and model-agnostic by default.
 
 ## Support
 
@@ -116,8 +125,10 @@ TopoAccess is built and maintained by Michael A. Anderson.
 
 If it saves you tokens, time, or debugging effort, consider sponsoring development:
 
-- GitHub Sponsors: coming soon
-- Buy Me a Coffee: coming soon
+- GitHub Sponsors: `mikeanderson42`
+- Buy Me a Coffee: add a custom URL after account setup
+
+Sponsorship supports public benchmarks, docs, harness integrations, fixture maintenance, and release hygiene. There are no paid-only code paths.
 
 ## Documentation
 
@@ -127,6 +138,10 @@ If it saves you tokens, time, or debugging effort, consider sponsoring developme
 - [Harness Integration](docs/HARNESS_INTEGRATION.md)
 - [Benchmarks](docs/BENCHMARKS.md)
 - [Token Savings](docs/TOKEN_SAVINGS.md)
+- [ROI Calculator](docs/ROI.md)
+- [Use Cases](docs/USE_CASES.md)
+- [Public Claims](docs/CLAIMS.md)
+- [Sponsoring](docs/SPONSORING.md)
 - [Model-Agnostic Design](docs/MODEL_AGNOSTIC.md)
 - [FAQ](docs/FAQ.md)
 - [Safety](docs/SAFETY.md)
