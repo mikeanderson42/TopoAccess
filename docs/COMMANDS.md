@@ -6,6 +6,8 @@
 
 ```bash
 topoaccess --help
+topoaccess init
+topoaccess try
 topoaccess version
 topoaccess commands
 topoaccessctl --help
@@ -19,6 +21,7 @@ topoaccess workspace status --profile demo
 topoaccess workspace list
 topoaccess workspace validate --profile demo
 topoaccess doctor --profile demo
+topoaccess doctor --profile demo --fix
 topoaccess doctor --fix-suggestions --profile demo
 ```
 
@@ -44,9 +47,16 @@ topoaccess benchmark scenario --profile demo --scenarios 50
 topoaccess serve-http --profile demo --port 8876 --smoke
 topoaccess stdio --profile demo --help
 topoaccess install-harness --target codex --profile demo --dry-run
+topoaccess setup codex --profile demo --dry-run
+topoaccess setup claude --profile demo --dry-run
+topoaccess setup cursor --profile demo --dry-run
+topoaccess setup generic --profile demo --dry-run
+topoaccess setup http --profile demo --dry-run
+topoaccess setup stdio --profile demo --dry-run
 ```
 
 `topoaccess serve-http` without `--smoke` and `topoaccess stdio` are long-running integration processes.
+`topoaccess setup <target>` is dry-run by default and does not modify external harness configs. A future external writer must require `--apply`.
 
 ## Validation
 

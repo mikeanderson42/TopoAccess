@@ -14,6 +14,9 @@ class CommandInfo:
 
 
 COMMANDS: dict[str, CommandInfo] = {
+    "init": CommandInfo("init", "Create a demo workspace and local cache for first use.", "workspace", legacy_equivalent="topoaccess workspace init"),
+    "try": CommandInfo("try", "Run a self-contained model-free demo.", "workspace"),
+    "setup": CommandInfo("setup", "Generate dry-run harness setup snippets with short target names.", "integration", legacy_equivalent="topoaccess install-harness"),
     "version": CommandInfo("version", "Print package version and public runtime posture.", "release"),
     "commands": CommandInfo("commands", "List supported topoaccess subcommands.", "help"),
     "workspace": CommandInfo("workspace", "Initialize, inspect, list, or validate workspace profiles.", "workspace", legacy_equivalent="topoaccess_workspace.py"),

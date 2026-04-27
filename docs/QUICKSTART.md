@@ -15,7 +15,18 @@ python -m pytest packages/topoaccess_prod/tests
 python -m compileall packages/topoaccess_prod
 ```
 
-Create a model-free workspace profile when using TopoAccess against a local repo:
+## 30-Second Quickstart
+
+Create the default demo workspace and run the model-free demo:
+
+```bash
+topoaccess init
+topoaccess try
+```
+
+`topoaccess init` is equivalent to the default workspace setup below. `topoaccess try` checks the package, creates local demo state if needed, runs an exact/tool route smoke, generates a Codex brief, and runs post-edit validation.
+
+Create a custom model-free workspace profile when using TopoAccess against a local repo:
 
 ```bash
 topoaccess workspace init \
@@ -30,6 +41,7 @@ Check the workspace:
 
 ```bash
 topoaccess doctor --profile demo
+topoaccess doctor --profile demo --fix
 ```
 
 Generate a Codex-ready brief:

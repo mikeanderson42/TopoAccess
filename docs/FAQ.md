@@ -56,3 +56,22 @@ python packages/topoaccess_prod/scripts/topoaccess_roi.py \
 ## Which CLI should I use?
 
 Use `topoaccess` for public workflows. `topoaccessctl` and `python packages/topoaccess_prod/scripts/*.py` remain available for compatibility and advanced debugging.
+
+## What should I run first?
+
+After installing from a fresh clone, run:
+
+```bash
+topoaccess init
+topoaccess try
+```
+
+This creates local `.topoaccess/` demo state and runs a model-free smoke demo. It does not require Qwen, LM Studio, Ollama, GPU access, private caches, or model weights.
+
+## Does `doctor --fix` change external tools?
+
+No. `topoaccess doctor --profile demo --fix` only performs safe local repairs such as creating `.topoaccess/cache`, a demo workspace profile, and an example local config. It does not install models, push git, edit shell profiles, or modify external harness configs.
+
+## Do setup shortcuts modify harness configs?
+
+No. `topoaccess setup codex`, `topoaccess setup claude`, `topoaccess setup cursor`, `topoaccess setup generic`, `topoaccess setup http`, and `topoaccess setup stdio` are dry-run by default and print setup snippets.
