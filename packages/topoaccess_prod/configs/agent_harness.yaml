@@ -2,4 +2,5 @@ version: topoaccess-prod-v31-agent-harness
 default_profile: default
 model_required: false
 model_adapter: workspace_configured_optional
-local_validation_model: Qwen3.6-35B-A3B-uncensored-heretic-APEX-I-Compact
+local_validation_model_example: Qwen3.6-35B-A3B-uncensored-heretic-APEX-I-Compact
+public_dependency_model: false

@@ -14,12 +14,12 @@ python packages/topoaccess_prod/scripts/topoaccess_agent.py codex-brief \
 
 ## Claude Code
 
-Use the generated hook examples in `release/topoaccess_prod_v41/claude_hooks/`. Hooks are read-first and should not auto-run destructive commands.
+Use the hook examples in `examples/integrations/claude_hooks/`. Hooks are read-first and should not auto-run destructive commands.
 
 ## Cursor
 
-Use the generated rule file in `release/topoaccess_prod_v41/cursor_rules/` to remind agents to run TopoAccess preflight and post-edit validation.
+Use `examples/integrations/cursor_rules/topoaccess.mdc` to remind agents to run TopoAccess preflight and post-edit validation.
 
 ## Generic HTTP/stdio
 
-Use `release/topoaccess_prod_v41/openapi.json`, `mcp_like_manifest.json`, and `stdio_schema.json` for tool integration. Write/apply tools are absent by default; post-edit validation is read-only.
+Use `examples/integrations/schemas/openapi.json`, `mcp_like_manifest.json`, and `stdio_schema.json` for tool integration. Write/apply tools are absent by default; post-edit validation is read-only.

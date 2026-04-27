@@ -16,7 +16,7 @@ The benchmark compares a broad-context baseline against TopoAccess-assisted mode
 - unsupported request handling
 - trace explanation
 
-Command:
+Example benchmark command:
 
 ```bash
 python packages/topoaccess_prod/scripts/topoaccess_benchmark_agents.py \
@@ -25,7 +25,7 @@ python packages/topoaccess_prod/scripts/topoaccess_benchmark_agents.py \
   --tasks exact_lookup test_impact command_lookup report_fact change_planning troubleshooting post_edit_validation unsupported trace_explanation \
   --requests 1000 \
   --fallback-requests 250 \
-  --out runs/topoaccess_prod_v41/benchmark.jsonl \
+  --out .topoaccess/benchmark.jsonl \
   --report /tmp/topoaccess_benchmark_report.md
 ```
 

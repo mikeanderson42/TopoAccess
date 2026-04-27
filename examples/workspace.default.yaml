@@ -1,4 +1,4 @@
 profile: default
 repo: .
-cache: cache/topoaccess_v21
+cache: .topoaccess/cache
 model_required: false

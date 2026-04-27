@@ -9,6 +9,8 @@ dist/
 !/packages/topoaccess_prod/topoaccess_prod/cache/*.py
 runs/
 logs/
+release/topoaccess_prod_v*/
+.topoaccess/
 .env
 *.gguf
 *.safetensors

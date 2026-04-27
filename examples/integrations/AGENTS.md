@@ -9,7 +9,7 @@ Rules:
 - Run preflight before edits: `python packages/topoaccess_prod/scripts/topoaccess_agent.py preflight --profile default --task "<task>"`.
 - Run post-edit validation after edits: `python packages/topoaccess_prod/scripts/topoaccess_agent.py post-edit --profile default --changed-files <files>`.
 - Run product tests: `python -m pytest packages/topoaccess_prod/tests`.
-- Run release validation: `python packages/topoaccess_prod/scripts/topoaccessctl.py validate-release --cache cache/topoaccess_v21 --release release/topoaccess_prod`.
+- Run model-free public checks: `python -m compileall packages/topoaccess_prod` and `topoaccessctl --help`.
 - Do not commit model files, GGUFs, cache blobs, logs, secrets, or env files.
 - Provenance is required for audited answers.
 - Use safe publish dry-run before branch publication.

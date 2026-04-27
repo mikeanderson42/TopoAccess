@@ -8,7 +8,7 @@ for p in [ROOT, REPO]:
 from topoaccess_prod.install.workspace_init import detect_workspace, init_workspace, list_workspaces, validate_workspace
 def main() -> int:
     p=argparse.ArgumentParser(); sub=p.add_subparsers(dest="cmd",required=True)
-    i=sub.add_parser("init"); i.add_argument("--profile",default="default"); i.add_argument("--repo",default="."); i.add_argument("--cache",default="cache/topoaccess_v21"); i.add_argument("--preferred-search",default="runs/topoaccess_v22/preferred_model_search.jsonl")
+    i=sub.add_parser("init"); i.add_argument("--profile",default="default"); i.add_argument("--repo",default="."); i.add_argument("--cache",default=".topoaccess/cache"); i.add_argument("--preferred-search",default=".topoaccess/preferred_model_search.jsonl")
     d=sub.add_parser("detect"); d.add_argument("--repo",default=".")
     sub.add_parser("list")
     s=sub.add_parser("status"); s.add_argument("--profile",default="default")

@@ -56,21 +56,22 @@ topoaccessctl --help
 
 ## Quick Start
 
+This path is designed for a fresh clone. It does not require Qwen, LM Studio, Ollama, GPU access, private caches, or model files.
+
 ```bash
 python packages/topoaccess_prod/scripts/topoaccess_workspace.py init \
-  --profile default \
+  --profile demo \
   --repo . \
-  --cache cache/topoaccess_v21 \
-  --preferred-search runs/topoaccess_v22/preferred_model_search.jsonl
+  --cache .topoaccess/cache
 
-python packages/topoaccess_prod/scripts/topoaccess_doctor.py --profile default
+python packages/topoaccess_prod/scripts/topoaccess_doctor.py --profile demo
 
 python packages/topoaccess_prod/scripts/topoaccess_agent.py codex-brief \
-  --profile default \
-  --task "Improve exact command lookup resolver"
+  --profile demo \
+  --task "What tests should I run after editing README.md?"
 
 python packages/topoaccess_prod/scripts/topoaccess_agent.py post-edit \
-  --profile default \
+  --profile demo \
   --changed-files packages/topoaccess_prod/README.md
 ```
 
@@ -84,10 +85,10 @@ topoaccessctl --help
 ## Harness Integrations
 
 - Codex: generate compact mission briefs with `topoaccess_agent.py codex-brief`.
-- Claude Code: use safe hook examples for preflight and post-edit validation.
-- Cursor: use generated `.mdc` rules for read-first, provenance-required workflows.
+- Claude Code: use safe hook examples in `examples/integrations/claude_hooks/` for preflight and post-edit validation.
+- Cursor: use `examples/integrations/cursor_rules/topoaccess.mdc` for read-first, provenance-required workflows.
 - Aider: use token-budgeted repo-map exports.
-- OpenClaw/OpenHands/Hermes/generic: use CLI, HTTP, stdio, OpenAPI, or MCP-like schemas.
+- OpenClaw/OpenHands/Hermes/generic: use CLI, HTTP, stdio, OpenAPI, or MCP-like schemas from `examples/integrations/schemas/`.
 
 ## Safety Model
 
