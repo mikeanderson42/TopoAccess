@@ -110,6 +110,15 @@ topoaccessctl --help
 - Private local caches/models are intentionally not included in this public repo.
 - Public CI validates deterministic/package behavior, not private model-backed local runtime quality.
 
+## Support
+
+TopoAccess is built and maintained by Michael A. Anderson.
+
+If it saves you tokens, time, or debugging effort, consider sponsoring development:
+
+- GitHub Sponsors: coming soon
+- Buy Me a Coffee: coming soon
+
 ## Documentation
 
 - [Install](docs/INSTALL.md)
