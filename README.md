@@ -46,13 +46,7 @@ Exact lookups, command lookups, artifact facts, and cached repo facts stay on de
 - `report_synthesis`
 - `troubleshooting`
 
-TopoAccess was locally validated with this workspace model during development, but it is not a public dependency:
-
-```text
-Qwen3.6-35B-A3B-uncensored-heretic-APEX-I-Compact
-```
-
-Public CI does not require that model, model weights, LM Studio, Ollama, GPU access, or private cache files. Local model adapters are configured through workspace profiles.
+Public CI does not require a model, model weights, LM Studio, Ollama, GPU access, or private cache files. Local model adapters are configured through workspace profiles.
 
 ## Install
 
