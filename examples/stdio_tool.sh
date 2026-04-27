@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-python packages/topoaccess_prod/scripts/topoaccess_agent.py stdio
+topoaccess stdio --profile "${TOPOACCESS_PROFILE:-demo}"

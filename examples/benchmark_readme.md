@@ -5,7 +5,7 @@
 Run a smoke benchmark:
 
 ```bash
-python packages/topoaccess_prod/scripts/topoaccess_benchmark_marathon.py \
+topoaccess benchmark rows \
   --profile demo \
   --rows 100 \
   --seed 1337 \

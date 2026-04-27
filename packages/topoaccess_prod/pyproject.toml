@@ -8,6 +8,7 @@ authors = [{name = "Michael A. Anderson", email = "MikeAnderson42@gmail.com"}]
 license = "Apache-2.0"
 
 [project.scripts]
+topoaccess = "topoaccess_prod.cli.main:main"
 topoaccessctl = "topoaccess_prod.cli.topoaccessctl:main"
 
 [tool.setuptools.packages.find]

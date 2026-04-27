@@ -4,6 +4,7 @@ Install from a clone:
 
 ```bash
 python -m pip install -e packages/topoaccess_prod
+topoaccess --help
 topoaccessctl --help
 ```
 
@@ -17,7 +18,7 @@ python -m compileall packages/topoaccess_prod
 Create a model-free workspace profile when using TopoAccess against a local repo:
 
 ```bash
-python packages/topoaccess_prod/scripts/topoaccess_workspace.py init \
+topoaccess workspace init \
   --profile demo \
   --repo . \
   --cache .topoaccess/cache
@@ -28,13 +29,13 @@ This creates local `.topoaccess/` state that is ignored by git. It does not requ
 Check the workspace:
 
 ```bash
-python packages/topoaccess_prod/scripts/topoaccess_doctor.py --profile demo
+topoaccess doctor --profile demo
 ```
 
 Generate a Codex-ready brief:
 
 ```bash
-python packages/topoaccess_prod/scripts/topoaccess_agent.py codex-brief \
+topoaccess codex-brief \
   --profile demo \
   --task "What tests should I run after editing README.md?"
 ```
@@ -42,7 +43,15 @@ python packages/topoaccess_prod/scripts/topoaccess_agent.py codex-brief \
 Validate after edits:
 
 ```bash
-python packages/topoaccess_prod/scripts/topoaccess_agent.py post-edit \
+topoaccess post-edit \
   --profile demo \
   --changed-files packages/topoaccess_prod/README.md
+```
+
+If a console entrypoint is unavailable while debugging packaging, use the legacy script fallback:
+
+```bash
+python packages/topoaccess_prod/scripts/topoaccess_agent.py codex-brief \
+  --profile demo \
+  --task "What tests should I run after editing README.md?"
 ```
