@@ -7,6 +7,7 @@ from typing import Any
 MAX_EXCERPT_CHARS = 800
 RELOCATION_SCORE_FLOOR = 0.85
 RELOCATION_SCORE_GAP = 0.20
+DEFAULT_SAMPLE_RATE = 0.02
 
 
 def normalize_source_uri(path: str | Path, repo_root: str | Path = ".") -> str:
@@ -84,7 +85,7 @@ def make_span_provenance(source_uri: str | Path, start_line: int, end_line: int,
     }
 
 
-def verify_span_provenance(entry: dict[str, Any], repo_root: str | Path = ".") -> dict:
+def verify_span_provenance(entry: dict[str, Any], repo_root: str | Path = ".", sample_rate: float = DEFAULT_SAMPLE_RATE) -> dict:
     source_uri = str(entry.get("source_uri", ""))
     expected_span_hash = entry.get("span_hash")
     result = {
@@ -94,12 +95,21 @@ def verify_span_provenance(entry: dict[str, Any], repo_root: str | Path = ".") -
         "expected_span_hash": expected_span_hash,
         "actual_span_hash": None,
         "location_changed": False,
+        "winning_tier": "",
+        "confidence": 0.0,
+        "score_gap": 0.0,
+        "candidate_count": 0,
+        "sampled_reaudit": _should_sample_reaudit(entry, sample_rate),
+        "sampled_reaudit_result": "not_sampled",
+        "calibration_status": "not_calibrated",
     }
     if not source_uri:
         result["reason"] = "missing source_uri"
+        _finalize_calibration(result, entry)
         return result
     if not expected_span_hash:
         result["reason"] = "missing span_hash"
+        _finalize_calibration(result, entry)
         return result
     try:
         data = _resolve_source_uri(source_uri, repo_root).read_bytes()
@@ -108,16 +118,21 @@ def verify_span_provenance(entry: dict[str, Any], repo_root: str | Path = ".") -
         original_span = data[start_byte : start_byte + span_byte_length]
     except Exception as exc:  # noqa: BLE001 - verifier must report, not crash.
         result["reason"] = str(exc)
+        _finalize_calibration(result, entry)
         return result
     result["actual_span_hash"] = compute_sha256(original_span)
     if result["actual_span_hash"] != expected_span_hash:
         matches = _find_span_hash_matches(data, expected_span_hash, span_byte_length, int(entry.get("span_line_count", 1)))
+        result["candidate_count"] = len(matches)
         if len(matches) == 1:
             result["result_status"] = "pass"
             result["reason"] = "pass_relocated_unique"
             result["actual_span_hash"] = expected_span_hash
             result["location_changed"] = True
             result["current_location"] = matches[0]
+            result["winning_tier"] = "relocated_unique"
+            result["confidence"] = 1.0
+            _finalize_calibration(result, entry)
             return result
         if len(matches) > 1:
             scored = _score_relocation_candidates(data, matches, entry)
@@ -132,17 +147,30 @@ def verify_span_provenance(entry: dict[str, Any], repo_root: str | Path = ".") -
                 result["relocation_score"] = winner["score"]
                 result["relocation_score_gap"] = winner["score_gap"]
                 result["context_anchor_matched"] = True
+                result["winning_tier"] = "relocated_scored"
+                result["confidence"] = winner["score"]
+                result["score_gap"] = winner["score_gap"]
+                _finalize_calibration(result, entry)
                 return result
             result["reason"] = "fail_ambiguous_force_reaudit"
+            result["winning_tier"] = "ambiguous_force_reaudit"
+            result["confidence"] = scored[0]["score"] if scored else 0.0
+            result["score_gap"] = round(scored[0]["score"] - scored[1]["score"], 6) if len(scored) > 1 else 0.0
+            _finalize_calibration(result, entry)
             return result
         result["reason"] = "fail_missing_force_reaudit"
+        result["winning_tier"] = "missing_force_reaudit"
+        _finalize_calibration(result, entry)
         return result
     result["result_status"] = "pass"
     result["reason"] = "pass_original_offset"
+    result["winning_tier"] = "exact_offset"
+    result["confidence"] = 1.0
+    _finalize_calibration(result, entry)
     return result
 
 
-def verify_provenance_entries(entries: list[Any], repo_root: str | Path = ".", require_span_hash: bool = True) -> dict:
+def verify_provenance_entries(entries: list[Any], repo_root: str | Path = ".", require_span_hash: bool = True, sample_rate: float = DEFAULT_SAMPLE_RATE) -> dict:
     failures = []
     verifications = []
     legacy_count = 0
@@ -158,7 +186,7 @@ def verify_provenance_entries(entries: list[Any], repo_root: str | Path = ".", r
             failures.append({"index": index, "source_uri": entry.get("source_uri"), "reason": "missing span_hash"})
             continue
         if entry.get("source_uri") and entry.get("span_hash"):
-            verified = verify_span_provenance(entry, repo_root=repo_root)
+            verified = verify_span_provenance(entry, repo_root=repo_root, sample_rate=sample_rate)
             verifications.append({"index": index, **verified})
             if verified["result_status"] != "pass":
                 failures.append({"index": index, **verified})
@@ -312,3 +340,39 @@ def _select_relocation_winner(scored: list[dict]) -> dict | None:
     if not top["context_anchor_match"]:
         return None
     return {**top, "score_gap": score_gap}
+
+
+def _should_sample_reaudit(entry: dict[str, Any], sample_rate: float) -> bool:
+    if sample_rate <= 0:
+        return False
+    if sample_rate >= 1:
+        return True
+    material = "|".join(str(entry.get(key, "")) for key in ["source_uri", "span_hash", "content_hash"])
+    digest = hashlib.sha256(material.encode("utf-8")).hexdigest()
+    bucket = int(digest[:16], 16) / float(0xFFFFFFFFFFFFFFFF)
+    return bucket < sample_rate
+
+
+def _finalize_calibration(result: dict, entry: dict[str, Any]) -> None:
+    if result["sampled_reaudit"]:
+        strict = _strict_reaudit_passes(result, entry)
+        result["sampled_reaudit_result"] = "pass" if strict else "fail"
+        if not strict and result["result_status"] == "pass":
+            result["result_status"] = "fail"
+            result["reason"] = "sampled_reaudit_failed_calibration"
+        result["calibration_status"] = "sampled_pass" if strict else "sampled_fail"
+    else:
+        result["sampled_reaudit_result"] = "not_sampled"
+        result["calibration_status"] = "not_sampled"
+
+
+def _strict_reaudit_passes(result: dict, entry: dict[str, Any]) -> bool:
+    if result["result_status"] != "pass":
+        return False
+    if result["winning_tier"] == "exact_offset":
+        return True
+    if result["winning_tier"] == "relocated_unique":
+        return bool(entry.get("prefix_hash") or entry.get("suffix_hash") or entry.get("section_anchor_hash"))
+    if result["winning_tier"] == "relocated_scored":
+        return bool(result.get("context_anchor_matched")) and result.get("confidence", 0.0) >= RELOCATION_SCORE_FLOOR
+    return False

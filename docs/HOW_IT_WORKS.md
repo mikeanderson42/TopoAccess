@@ -10,6 +10,8 @@ For audited answers, TopoAccess can attach structured span provenance. A span-ha
 
 Verification tries the original byte offset first. If the file changed and the original offset no longer matches, TopoAccess scans live source candidates with the same byte length and line count. Zero matches return `fail_missing_force_reaudit`. One match returns `pass_relocated_unique`. Multiple matches are scored with prefix hash, suffix hash, section-anchor hash, occurrence index, line proximity, and byte proximity; the result only passes when the top score is at least `0.85`, the score gap is at least `0.20`, and at least one context anchor matches. Otherwise TopoAccess returns `fail_ambiguous_force_reaudit`.
 
+Each verification result logs its winning tier, confidence, score gap, candidate count, and deterministic sampled re-audit status. Sampling uses a stable hash rather than runtime randomness, so the same provenance entry makes the same calibration decision across runs.
+
 Post-call validation uses a field-mask posture for payload-style checks: expected fields may change, but changes outside the allowed mask are unauthorized. Raw JSON equality is not treated as the authority for scoped validation.
 
 Exact repo facts stay tool-only and never require a model. Optional model-backed synthesis is only allowed for category-gated synthesis/planning tasks:

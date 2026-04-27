@@ -35,6 +35,11 @@ def test_verify_span_provenance_passes_for_unchanged_content(tmp_path):
 
     assert result["result_status"] == "pass"
     assert result["reason"] == "pass_original_offset"
+    assert result["winning_tier"] == "exact_offset"
+    assert result["confidence"] == 1.0
+    assert result["score_gap"] == 0.0
+    assert result["candidate_count"] == 0
+    assert result["calibration_status"] == "not_sampled"
     assert result["actual_span_hash"] == entry["span_hash"]
 
 
@@ -77,6 +82,9 @@ def test_verify_span_provenance_passes_when_span_moves_in_same_source(tmp_path):
 
     assert result["result_status"] == "pass"
     assert result["reason"] == "pass_relocated_unique"
+    assert result["winning_tier"] == "relocated_unique"
+    assert result["confidence"] == 1.0
+    assert result["candidate_count"] == 1
     assert result["location_changed"] is True
     assert result["current_location"]["start_line"] == 3
     assert result["expected_span_hash"] == entry["span_hash"]
@@ -120,10 +128,13 @@ def test_verify_span_provenance_passes_multi_match_with_context_anchor_winner(tm
 
     assert result["result_status"] == "pass"
     assert result["reason"] == "pass_relocated_scored"
+    assert result["winning_tier"] == "relocated_scored"
     assert result["location_changed"] is True
     assert result["current_location"]["start_line"] == 6
     assert result["relocation_score"] >= 0.85
     assert result["relocation_score_gap"] >= 0.20
+    assert result["confidence"] == result["relocation_score"]
+    assert result["score_gap"] == result["relocation_score_gap"]
     assert result["context_anchor_matched"] is True
 
 
@@ -137,6 +148,7 @@ def test_verify_span_provenance_fails_multi_match_below_confidence_floor(tmp_pat
 
     assert result["result_status"] == "fail"
     assert result["reason"] == "fail_ambiguous_force_reaudit"
+    assert result["winning_tier"] == "ambiguous_force_reaudit"
 
 
 def test_verify_span_provenance_fails_repeated_headers_with_no_anchor_match(tmp_path):
@@ -149,6 +161,7 @@ def test_verify_span_provenance_fails_repeated_headers_with_no_anchor_match(tmp_
 
     assert result["result_status"] == "fail"
     assert result["reason"] == "fail_ambiguous_force_reaudit"
+    assert result["winning_tier"] == "ambiguous_force_reaudit"
 
 
 def test_verify_span_provenance_fails_when_moved_span_has_multiple_matches_without_winner(tmp_path):
@@ -161,6 +174,7 @@ def test_verify_span_provenance_fails_when_moved_span_has_multiple_matches_witho
 
     assert result["result_status"] == "fail"
     assert result["reason"] == "fail_ambiguous_force_reaudit"
+    assert result["winning_tier"] == "ambiguous_force_reaudit"
 
 
 def test_make_span_provenance_bounds_and_truncates_excerpt(tmp_path):
@@ -173,3 +187,46 @@ def test_make_span_provenance_bounds_and_truncates_excerpt(tmp_path):
     assert entry["bounded_excerpt"].endswith("\n...")
     assert len(entry["bounded_excerpt"]) < entry["span_byte_length"]
     assert "audited_span_text" not in entry
+
+
+def test_deterministic_sample_selection_is_stable_across_runs(tmp_path):
+    source = tmp_path / "doc.md"
+    source.write_text("intro\nstable audited span\noutro\n", encoding="utf-8")
+    entry = make_span_provenance("doc.md", 2, 2, repo_root=tmp_path)
+
+    first = verify_span_provenance(entry, repo_root=tmp_path)
+    second = verify_span_provenance(entry, repo_root=tmp_path)
+
+    assert first["sampled_reaudit"] == second["sampled_reaudit"]
+    assert first["sampled_reaudit_result"] == second["sampled_reaudit_result"]
+    assert first["calibration_status"] == second["calibration_status"]
+
+
+def test_sampled_reaudit_failure_fails_closed_for_unanchored_unique_relocation(tmp_path):
+    source = tmp_path / "doc.md"
+    source.write_text("target\n", encoding="utf-8")
+    entry = make_span_provenance("doc.md", 1, 1, repo_root=tmp_path)
+    source.write_text("prefix\ntarget\n", encoding="utf-8")
+
+    result = verify_span_provenance(entry, repo_root=tmp_path, sample_rate=1.0)
+
+    assert result["sampled_reaudit"] is True
+    assert result["sampled_reaudit_result"] == "fail"
+    assert result["calibration_status"] == "sampled_fail"
+    assert result["result_status"] == "fail"
+    assert result["reason"] == "sampled_reaudit_failed_calibration"
+
+
+def test_unsampled_relocated_unique_pass_remains_pass(tmp_path):
+    source = tmp_path / "doc.md"
+    source.write_text("target\n", encoding="utf-8")
+    entry = make_span_provenance("doc.md", 1, 1, repo_root=tmp_path)
+    source.write_text("prefix\ntarget\n", encoding="utf-8")
+
+    result = verify_span_provenance(entry, repo_root=tmp_path, sample_rate=0.0)
+
+    assert result["sampled_reaudit"] is False
+    assert result["sampled_reaudit_result"] == "not_sampled"
+    assert result["calibration_status"] == "not_sampled"
+    assert result["result_status"] == "pass"
+    assert result["winning_tier"] == "relocated_unique"
