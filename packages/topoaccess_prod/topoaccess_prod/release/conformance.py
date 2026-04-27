@@ -8,6 +8,8 @@ from .distribution_builder import _base_row
 
 def check_conformance(release: str, out: str, report: str) -> list[dict]:
     base = Path(release)
+    if not (base / "AGENTS.md").exists() and Path("examples/integrations/AGENTS.md").exists():
+        base = Path("examples/integrations")
     schema_base = base / "schemas" if (base / "schemas").exists() else base
     checks = {
         "agents_md": base / "AGENTS.md",

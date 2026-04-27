@@ -14,3 +14,5 @@ Exact repo facts stay tool-only and never require a model. Optional model-backed
 - `troubleshooting`
 
 This keeps exact lookup, command lookup, artifact lookup, and report facts from becoming broad model-context prompts. Public CI exercises this deterministic surface without requiring private model files, LM Studio, Ollama, GPU access, or private caches.
+
+The current public benchmark shows the largest token savings on exact lookup, unsupported request handling, command lookup, symbol lookup, and artifact lookup. Change planning and troubleshooting still save tokens, but they are the weakest categories because they need richer context and may use optional category-gated synthesis in local deployments.

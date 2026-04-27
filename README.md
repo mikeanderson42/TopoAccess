@@ -8,14 +8,20 @@ It helps tools like Codex, Claude Code, Cursor, Aider, OpenClaw, OpenHands, Herm
 
 Coding agents are strongest when they have the right context and weakest when they must rediscover repo structure from scratch. TopoAccess reduces that rediscovery cost by routing exact repository work through deterministic tools, TopoGraph/cache indexes, and small prompt packs.
 
-Current public release-candidate benchmark:
+Current public benchmark:
 
-- Benchmark rows: `250`.
-- Average token savings vs broad-context baseline: `0.9500`.
+| Metric | Result |
+| --- | ---: |
+| Rows | `10000` |
+| Assisted rows | `6666` |
+| Average assisted token savings vs broad-context baseline | `0.9462` |
+| Median assisted token savings | `0.9531` |
+| p50 / p95 latency across all modes | `131.0 ms` / `998.0 ms` |
+| Wrong high-confidence answers | `0` |
+| Unsupported high-confidence answers | `0` |
+
 - Exact lookup: tool-only, no model fallback.
-- Wrong high-confidence answers: `0`.
-- Unsupported high-confidence answers: `0`.
-- Public CI: model-free, cache-free, GPU-free, and private-runtime-free.
+- Public CI and public benchmark: model-free, cache-free, GPU-free, and private-runtime-free.
 - Model posture: model-agnostic by default; optional model-backed synthesis is configured per workspace.
 
 ## How It Works
