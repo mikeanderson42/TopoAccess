@@ -14,6 +14,17 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("version", help="Print package version and model-free public posture.").set_defaults(handler=commands.cmd_version)
     sub.add_parser("commands", help="List supported commands.").set_defaults(handler=commands.cmd_commands)
 
+    init = sub.add_parser("init", help="Create a demo workspace and local cache for first use.")
+    init.add_argument("--profile", default="demo")
+    init.add_argument("--repo", default=".")
+    init.add_argument("--cache", default=".topoaccess/cache")
+    init.set_defaults(handler=commands.cmd_init)
+
+    try_demo = sub.add_parser("try", help="Run a self-contained model-free demo.")
+    try_demo.add_argument("--profile", default="demo")
+    try_demo.add_argument("--repo", default=".")
+    try_demo.set_defaults(handler=commands.cmd_try)
+
     workspace = sub.add_parser("workspace", help="Manage workspace profiles.")
     wsp = workspace.add_subparsers(dest="workspace_command", required=True)
     init = wsp.add_parser("init", help="Create a fresh-clone model-free workspace profile.")
@@ -34,6 +45,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     doctor = sub.add_parser("doctor", help="Run model-free doctor checks.")
     doctor.add_argument("--profile", default="demo")
+    doctor.add_argument("--fix", action="store_true", help="Apply safe local repairs only.")
     doctor.add_argument("--fix-suggestions", action="store_true")
     doctor.add_argument("--out", default=".topoaccess/doctor.jsonl")
     doctor.add_argument("--report", default=".topoaccess/doctor.md")
@@ -99,6 +111,13 @@ def build_parser() -> argparse.ArgumentParser:
     install.add_argument("--dry-run", action="store_true", default=True)
     install.add_argument("--out", default="runs/topoaccess_prod_v46/installers.jsonl")
     install.set_defaults(handler=commands.cmd_install_harness)
+
+    setup = sub.add_parser("setup", help="Generate dry-run setup snippets for common harnesses.")
+    setup.add_argument("target", choices=["codex", "claude", "cursor", "aider", "generic", "http", "stdio"])
+    setup.add_argument("--profile", default="demo")
+    setup.add_argument("--dry-run", action="store_true", default=True)
+    setup.add_argument("--apply", action="store_true", help="Reserved for future explicit external-config writers.")
+    setup.set_defaults(handler=commands.cmd_setup)
 
     conformance = sub.add_parser("conformance", help="Run conformance checks.")
     conformance.add_argument("--release", default="examples/integrations")

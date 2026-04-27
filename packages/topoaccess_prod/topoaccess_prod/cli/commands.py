@@ -6,7 +6,11 @@ from pathlib import Path
 from ..harness.benchmark_marathon import run_marathon
 from ..harness.scenario_benchmark import build_dataset_file, run_scenarios
 from ..install.doctor import write_doctor
+from ..install.doctor_fixes import apply_safe_doctor_fixes
+from ..install.first_run import run_first_init
+from ..install.harness_setup_shortcuts import run_setup_shortcut
 from ..install.harness_installer import write_installers
+from ..install.try_demo import run_try_demo
 from ..install.workspace_init import detect_workspace, init_workspace, list_workspaces, validate_workspace
 from ..integrations.codex_adapter import codex_brief
 from ..integrations.generic_agent_adapter import preflight_query
@@ -41,6 +45,18 @@ def cmd_commands(args: object) -> int:
     return 0
 
 
+def cmd_init(args: object) -> int:
+    result = run_first_init(args.profile, args.repo, args.cache)
+    print_json(result)
+    return 0 if result["result_status"] == "pass" else 1
+
+
+def cmd_try(args: object) -> int:
+    result = run_try_demo(args.profile, args.repo)
+    print_json(result)
+    return 0 if result["result_status"] == "pass" else 1
+
+
 def cmd_workspace(args: object) -> int:
     if args.workspace_command == "init":
         result = init_workspace(args.profile, args.repo, args.cache, args.preferred_search)
@@ -57,8 +73,15 @@ def cmd_workspace(args: object) -> int:
 
 
 def cmd_doctor(args: object) -> int:
+    fix_result = apply_safe_doctor_fixes(args.profile) if getattr(args, "fix", False) else None
     rows = write_doctor(args.profile, args.out, args.report)
-    result = {"doctor_rows": len(rows), "fix_suggestions": bool(args.fix_suggestions), "status": "pass" if all(r["result_status"] == "pass" for r in rows) else "fail"}
+    result = {
+        "doctor_rows": len(rows),
+        "fix": bool(getattr(args, "fix", False)),
+        "fix_result": fix_result,
+        "fix_suggestions": bool(args.fix_suggestions),
+        "status": "pass" if all(r["result_status"] == "pass" for r in rows) else "fail",
+    }
     print_json(result)
     return 0 if result["status"] == "pass" else 1
 
@@ -143,6 +166,12 @@ def cmd_install_harness(args: object) -> int:
     rows = write_installers([args.target], args.profile, True, args.out)
     print_json({"installer_rows": len(rows), "target": args.target, "dry_run": True, "status": "pass"})
     return 0
+
+
+def cmd_setup(args: object) -> int:
+    result = run_setup_shortcut(args.target, args.profile, args.dry_run, args.apply)
+    print_json(result)
+    return 0 if result["result_status"] == "pass" else 1
 
 
 def cmd_conformance(args: object) -> int:

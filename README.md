@@ -67,9 +67,32 @@ topoaccess --help
 topoaccessctl --help
 ```
 
-## Quick Start
+## 30-Second Quickstart
 
 This path is designed for a fresh clone. It does not require Qwen, LM Studio, Ollama, GPU access, private caches, or model files.
+
+```bash
+topoaccess init
+topoaccess try
+```
+
+`topoaccess init` creates the local `.topoaccess/cache` demo workspace. `topoaccess try` runs a model-free smoke demo with package checks, exact/tool routing, a Codex brief, and post-edit validation.
+
+## Quick Start
+
+After the 30-second quickstart, ask for a compact brief or validate edits:
+
+```bash
+topoaccess codex-brief \
+  --profile demo \
+  --task "What tests should I run after editing README.md?"
+
+topoaccess post-edit \
+  --profile demo \
+  --changed-files README.md
+```
+
+The explicit workspace command remains available when you want custom profile names or cache paths:
 
 ```bash
 topoaccess workspace init \
@@ -78,14 +101,7 @@ topoaccess workspace init \
   --cache .topoaccess/cache
 
 topoaccess doctor --profile demo
-
-topoaccess codex-brief \
-  --profile demo \
-  --task "What tests should I run after editing README.md?"
-
-topoaccess post-edit \
-  --profile demo \
-  --changed-files packages/topoaccess_prod/README.md
+topoaccess doctor --profile demo --fix
 ```
 
 For a model-free public smoke test:
@@ -98,7 +114,7 @@ topoaccessctl --help
 
 ## Harness Integrations
 
-- Codex: generate compact mission briefs with `topoaccess_agent.py codex-brief`.
+- Codex: generate compact mission briefs with `topoaccess codex-brief`; preview setup with `topoaccess setup codex --dry-run`.
 - Claude Code: use safe hook examples in `examples/integrations/claude_hooks/` for preflight and post-edit validation.
 - Cursor: use `examples/integrations/cursor_rules/topoaccess.mdc` for read-first, provenance-required workflows.
 - Aider: use token-budgeted repo-map exports.
