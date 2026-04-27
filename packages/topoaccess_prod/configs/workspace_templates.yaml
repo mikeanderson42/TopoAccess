@@ -1,6 +1,6 @@
 default:
   repo: .
-  cache: cache/topoaccess_v21
+  cache: .topoaccess/cache
   model_required: false
   model_adapter: workspace_configured_optional
-  preferred_search: runs/topoaccess_v22/preferred_model_search.jsonl
+  preferred_search: .topoaccess/preferred_model_search.jsonl

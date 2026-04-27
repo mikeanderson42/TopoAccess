@@ -9,7 +9,7 @@ The public repository keeps the current product surface only:
 - public docs
 - examples
 - CI
-- current release assets
+- release notes and links to GitHub Release assets
 - current benchmark summary
 
-Older root-level candidate reports and versioned release folders were removed from the public surface in V41 to keep the repository focused and professional. Historical development artifacts remain in the private working history rather than being part of the public release candidate.
+Older root-level candidate reports and versioned release folders are intentionally excluded from the public surface to keep the repository focused and professional. Historical development artifacts remain in private working history and Git history rather than being part of the source tree.

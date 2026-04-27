@@ -22,6 +22,8 @@ jobs:
       - name: Compile
         run: python -m compileall packages/topoaccess_prod
       - name: Artifact audit
-        run: python packages/topoaccess_prod/scripts/topoaccess_artifact_audit.py --paths packages/topoaccess_prod .github --out audit.jsonl --report AUDIT.md
+        run: python packages/topoaccess_prod/scripts/topoaccess_artifact_audit.py --paths packages/topoaccess_prod .github README.md docs examples LICENSE NOTICE CHANGELOG.md CONTRIBUTING.md SECURITY.md release_notes.md --out audit.jsonl --report AUDIT.md
       - name: Secret scan
-        run: python packages/topoaccess_prod/scripts/topoaccess_secret_scan.py --paths packages/topoaccess_prod .github --out secret_scan.jsonl --report AUDIT.md
+        run: python packages/topoaccess_prod/scripts/topoaccess_secret_scan.py --paths packages/topoaccess_prod .github README.md docs examples LICENSE NOTICE CHANGELOG.md CONTRIBUTING.md SECURITY.md release_notes.md --out secret_scan.jsonl --report AUDIT.md
+      - name: Integration conformance
+        run: python packages/topoaccess_prod/scripts/topoaccess_conformance_check.py --release examples/integrations --out conformance.jsonl --report CONFORMANCE.md

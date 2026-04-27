@@ -8,14 +8,15 @@ from .distribution_builder import _base_row
 
 def check_conformance(release: str, out: str, report: str) -> list[dict]:
     base = Path(release)
+    schema_base = base / "schemas" if (base / "schemas").exists() else base
     checks = {
         "agents_md": base / "AGENTS.md",
         "cursor_rules": base / "cursor_rules" / "topoaccess.mdc",
         "claude_hooks": base / "claude_hooks" / "settings.example.json",
-        "openapi": base / "openapi.json",
-        "mcp": base / "mcp_like_manifest.json",
-        "stdio": base / "stdio_schema.json",
-        "tool_schema": base / "tool_schema.json",
+        "openapi": schema_base / "openapi.json",
+        "mcp": schema_base / "mcp_like_manifest.json",
+        "stdio": schema_base / "stdio_schema.json",
+        "tool_schema": schema_base / "tool_schema.json",
     }
     rows = []
     for name, path in checks.items():
@@ -25,7 +26,7 @@ def check_conformance(release: str, out: str, report: str) -> list[dict]:
             json.loads(path.read_text(encoding="utf-8"))
         row.update({"check": name, "exists": ok, "release_gate_status": "pass" if ok else "fail", "result_status": "pass" if ok else "fail"})
         rows.append(row)
-    schema_path = base / "tool_schema.json"
+    schema_path = schema_base / "tool_schema.json"
     if schema_path.exists():
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
         exact = next(tool for tool in schema["tools"] if tool["name"] == "exact_lookup")
@@ -35,4 +36,3 @@ def check_conformance(release: str, out: str, report: str) -> list[dict]:
     failures = [r for r in rows if r["result_status"] != "pass"]
     Path(report).write_text(f"# V38 Conformance\n\n- Rows: `{len(rows)}`\n- Failures: `{len(failures)}`\n- Exact lookup forbids model fallback.\n", encoding="utf-8")
     return rows
-

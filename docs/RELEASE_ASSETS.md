@@ -1,6 +1,6 @@
 # Release Assets
 
-Repository files appear after PR merge. GitHub Release downloadable assets are separate uploads attached to a tag.
+Repository files appear after PR merge. GitHub Release downloadable assets are separate uploads attached to a tag and are not kept as generated tarballs in the source tree.
 
 Suggested release tag:
 
@@ -14,28 +14,32 @@ Suggested release title:
 TopoAccess v1.0.0-rc1
 ```
 
-Suggested assets:
+Current prerelease assets are attached at:
 
-- `release/topoaccess_prod_v41/release_manifest.json`
-- `release/topoaccess_prod_v41/release_notes.md`
-- `release/topoaccess_prod_v41/dist/*`
-- `release/topoaccess_prod_v41/checksums.txt`
+- https://github.com/mikeanderson42/TopoAccess/releases/tag/v1.0.0-rc1
 
-Create the release after the PR is merged and the tag exists:
+Suggested assets for a future release:
+
+- source archive
+- release archive
+- `release_manifest.json`
+- `checksums.txt`
+
+Example command to create a future prerelease after the PR is merged and gates pass:
 
 ```bash
 gh release create v1.0.0-rc1 \
   --repo mikeanderson42/TopoAccess \
   --title "TopoAccess v1.0.0-rc1" \
-  --notes-file release/topoaccess_prod_v41/release_notes.md
+  --notes-file release_notes.md \
+  --prerelease
 ```
 
-Upload assets:
+Example upload command for future generated assets:
 
 ```bash
 gh release upload v1.0.0-rc1 \
-  release/topoaccess_prod_v41/release_manifest.json \
-  release/topoaccess_prod_v41/checksums.txt \
+  <asset-paths> \
   --repo mikeanderson42/TopoAccess
 ```
 

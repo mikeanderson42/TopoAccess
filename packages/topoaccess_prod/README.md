@@ -32,10 +32,12 @@ TopoAccess is not a replacement for coding agents. It is a repo-intelligence lay
 ## Quick Start
 
 ```bash
-python packages/topoaccess_prod/scripts/topoaccess_workspace.py init --profile default --repo . --cache cache/topoaccess_v21 --preferred-search runs/topoaccess_v22/preferred_model_search.jsonl
-python packages/topoaccess_prod/scripts/topoaccess_doctor.py --profile default
-python packages/topoaccess_prod/scripts/topoaccess_agent.py codex-brief --profile default --task "Improve exact command lookup resolver"
+python packages/topoaccess_prod/scripts/topoaccess_workspace.py init --profile demo --repo . --cache .topoaccess/cache
+python packages/topoaccess_prod/scripts/topoaccess_doctor.py --profile demo
+python packages/topoaccess_prod/scripts/topoaccess_agent.py codex-brief --profile demo --task "What tests should I run after editing README.md?"
 ```
+
+The quick start is model-free and works from a fresh clone. Optional model-backed synthesis can be configured later through workspace profiles for category-gated planning/narrative tasks.
 
 ## Harness Install
 
@@ -52,9 +54,9 @@ python packages/topoaccess_prod/scripts/topoaccess_agent_install.py --target gen
 ## Query Examples
 
 ```bash
-python packages/topoaccess_prod/scripts/topoaccess_agent.py preflight --profile default --task "Add a token accounting report"
-python packages/topoaccess_prod/scripts/topoaccess_agent.py test-impact --profile default --changed-file packages/topoaccess_prod/topoaccess_prod/harness/token_ledger.py
-python packages/topoaccess_prod/scripts/topoaccess_agent.py post-edit --profile default --changed-files packages/topoaccess_prod/topoaccess_prod/harness/token_ledger.py
+python packages/topoaccess_prod/scripts/topoaccess_agent.py preflight --profile demo --task "Add a token accounting report"
+python packages/topoaccess_prod/scripts/topoaccess_agent.py test-impact --profile demo --changed-file packages/topoaccess_prod/topoaccess_prod/harness/token_ledger.py
+python packages/topoaccess_prod/scripts/topoaccess_agent.py post-edit --profile demo --changed-files packages/topoaccess_prod/topoaccess_prod/harness/token_ledger.py
 ```
 
 ## Safety Model
