@@ -3,23 +3,29 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from .path_filters import iter_files
+
 FORBIDDEN_EXTS = {".gguf", ".safetensors", ".ckpt", ".pth", ".pt"}
 FORBIDDEN_NAMES = {".env"}
 
 
-def audit_artifacts(paths: list[str], out: str, report: str) -> list[dict]:
+def audit_artifacts(paths: list[str], out: str, report: str, exclude_dirs: list[str] | None = None, max_file_bytes: int | None = None) -> list[dict]:
     rows = []
-    for root in paths:
-        for path in Path(root).rglob("*"):
-            if not path.is_file():
-                continue
-            rel = str(path)
-            parts = set(path.parts)
-            if "__pycache__" in parts:
-                continue
+    excludes = ["__pycache__", *(exclude_dirs or [])]
+    for path, meta in iter_files(paths, exclude_dirs=excludes, max_file_bytes=max_file_bytes):
+        if meta["result_status"] == "skipped":
+            continue
+        if meta["result_status"] == "error":
+            rows.append({"phase": "artifact_audit", **meta, "result_status": "fail"})
+            continue
+        rel = str(path)
+        parts = set(path.parts)
+        try:
             runtime_cache = path.parts[0] == "cache" if path.parts else False
             fail = path.suffix.lower() in FORBIDDEN_EXTS or path.name in FORBIDDEN_NAMES or "logs" in parts or runtime_cache
-            rows.append({"phase": "artifact_audit", "path": rel, "bytes": path.stat().st_size, "result_status": "fail" if fail else "pass"})
+            rows.append({"phase": "artifact_audit", "path": rel, "bytes": meta.get("bytes", path.stat().st_size), "result_status": "fail" if fail else "pass"})
+        except OSError as exc:
+            rows.append({"phase": "artifact_audit", "path": rel, "error_type": type(exc).__name__, "message": str(exc), "result_status": "fail"})
     failures = [row for row in rows if row["result_status"] == "fail"]
     Path(out).parent.mkdir(parents=True, exist_ok=True)
     Path(out).write_text("\n".join(json.dumps(row, sort_keys=True) for row in rows) + "\n", encoding="utf-8")

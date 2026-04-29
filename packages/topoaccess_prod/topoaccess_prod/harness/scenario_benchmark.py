@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from .scenario_fixtures import MODES, build_dataset, write_dataset
+from .streaming_stats import BenchmarkRunResult, NumericSeries, iter_jsonl
 from .workflow_scorer import TOPO_MODES, score_step, selection_score
 
 
@@ -19,16 +21,27 @@ def run_scenarios(
     summary: str | Path,
     report: str | Path,
     resume: bool = False,
-) -> list[dict]:
+) -> BenchmarkRunResult:
     target = scenarios if scenarios <= 2500 else min(scenarios, max(fallback_scenarios, 2500))
-    dataset = _load_dataset(dataset_path)
+    dataset = list(iter_dataset(dataset_path))
+    if not dataset:
+        raise ValueError(f"scenario dataset is empty: {dataset_path}")
     selected_modes = modes or MODES
     out_path = Path(out)
-    existing = _load_rows(out_path) if resume else []
-    start_scenario = len({r["scenario_id"] + ":" + r["mode"] for r in existing}) // max(1, len(selected_modes)) if existing else 0
-    rows = list(existing)
+    stats = ScenarioStats()
+    retained_rows: list[dict] | None = [] if target <= 500 else None
+    existing_pairs: set[str] = set()
+    if resume:
+        for row in iter_jsonl(out_path):
+            stats.add(row)
+            existing_pairs.add(row["scenario_id"] + ":" + row["mode"])
+            if retained_rows is not None:
+                retained_rows.append(row)
+    start_scenario = len(existing_pairs) // max(1, len(selected_modes)) if existing_pairs else 0
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    with out_path.open("a" if existing and resume else "w", encoding="utf-8") as stream:
+    chunk_rows: list[dict] = []
+    chunk_base = out_path.parent / "scenario_chunks"
+    with out_path.open("a" if existing_pairs and resume else "w", encoding="utf-8") as stream:
         for scenario_index in range(start_scenario, target):
             scenario = dataset[scenario_index % len(dataset)]
             scenario_run_id = f"{scenario['scenario_id']}-{seed}-{scenario_index}"
@@ -47,17 +60,27 @@ def run_scenarios(
                     }
                     row.update(score_step(scenario, mode, step_idx, category, seed + scenario_index))
                     stream.write(json.dumps(row, sort_keys=True) + "\n")
-                    rows.append(row)
-    write_scenario_summary(rows, summary, report)
-    return rows
+                    stats.add(row)
+                    if retained_rows is not None:
+                        retained_rows.append(row)
+                    chunk_rows.append(row)
+                    if len(chunk_rows) >= chunk_size:
+                        chunk_base.mkdir(parents=True, exist_ok=True)
+                        _write_rows(chunk_rows, chunk_base / f"chunk_{scenario_index + 1:06d}.jsonl")
+                        chunk_rows = []
+    if chunk_rows and target > 500:
+        chunk_base.mkdir(parents=True, exist_ok=True)
+        _write_rows(chunk_rows, chunk_base / f"chunk_{target:06d}.jsonl")
+    write_scenario_summary(stats, summary, report)
+    return BenchmarkRunResult(row_count=stats.steps, rows=retained_rows)
 
 
 def build_dataset_file(fixtures: str | Path, out: str | Path, report: str | Path) -> list[dict]:
     return write_dataset(fixtures, out, report)
 
 
-def write_scenario_summary(rows: list[dict], out: str | Path, report: str | Path | None = None, markdown: str | Path | None = None) -> dict:
-    summary = summarize_scenarios(rows)
+def write_scenario_summary(rows: list[dict] | "ScenarioStats", out: str | Path, report: str | Path | None = None, markdown: str | Path | None = None) -> dict:
+    summary = rows.summary() if isinstance(rows, ScenarioStats) else summarize_scenarios(rows)
     Path(out).parent.mkdir(parents=True, exist_ok=True)
     Path(out).write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     if markdown:
@@ -157,13 +180,145 @@ def _report_text(summary: dict) -> str:
 
 
 def _load_dataset(path: str | Path) -> list[dict]:
-    return [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines() if line.strip()]
+    return list(iter_dataset(path))
 
 
 def _load_rows(path: Path) -> list[dict]:
-    if not path.exists():
-        return []
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return list(iter_jsonl(path))
+
+
+def iter_dataset(path: str | Path):
+    yield from iter_jsonl(path)
+
+
+def _write_rows(rows: list[dict], path: Path) -> None:
+    path.write_text("\n".join(json.dumps(row, sort_keys=True) for row in rows) + "\n", encoding="utf-8")
+
+
+@dataclass
+class ScenarioGroupStats:
+    steps: int = 0
+    token_savings: NumericSeries = field(default_factory=NumericSeries)
+    latency_ms: NumericSeries = field(default_factory=NumericSeries)
+
+    def add(self, row: dict) -> None:
+        self.steps += 1
+        self.token_savings.add(row.get("token_savings", 0.0))
+        self.latency_ms.add(row.get("latency_ms", 0.0))
+
+    def summary(self) -> dict:
+        return {
+            "steps": self.steps,
+            "average_token_savings": self.token_savings.mean(),
+            "median_token_savings": self.token_savings.median(),
+            "p50_latency_ms": self.latency_ms.median(),
+            "p95_latency_ms": self.latency_ms.percentile(95),
+        }
+
+
+@dataclass
+class ScenarioStats:
+    scenario_ids: set[str] = field(default_factory=set)
+    steps: int = 0
+    assisted_steps: int = 0
+    assisted_token_savings: NumericSeries = field(default_factory=NumericSeries)
+    assisted_latency_ms: NumericSeries = field(default_factory=NumericSeries)
+    all_latency_ms: NumericSeries = field(default_factory=NumericSeries)
+    cache_hits: int = 0
+    cache_reuse_count: int = 0
+    file_score: NumericSeries = field(default_factory=NumericSeries)
+    test_score: NumericSeries = field(default_factory=NumericSeries)
+    command_score: NumericSeries = field(default_factory=NumericSeries)
+    provenance_hits: int = 0
+    post_edit_rows: int = 0
+    post_edit_passes: int = 0
+    assisted_post_edit_rows: int = 0
+    assisted_post_edit_passes: int = 0
+    stale_cache_rows: int = 0
+    stale_cache_prevented: int = 0
+    hallucinated_file_count: int = 0
+    hallucinated_command_count: int = 0
+    topoaccess_hallucinated_file_count: int = 0
+    topoaccess_hallucinated_command_count: int = 0
+    unsupported_rows: int = 0
+    unsupported_correct: int = 0
+    wrong_high_confidence: int = 0
+    unsupported_high_confidence: int = 0
+    by_workflow: dict[str, ScenarioGroupStats] = field(default_factory=dict)
+    by_mode: dict[str, ScenarioGroupStats] = field(default_factory=dict)
+
+    def add(self, row: dict) -> None:
+        self.scenario_ids.add(row["scenario_id"])
+        self.steps += 1
+        mode = row["mode"]
+        assisted = mode in TOPO_MODES
+        category = row["category"]
+        self.all_latency_ms.add(row.get("latency_ms", 0.0))
+        self.by_mode.setdefault(mode, ScenarioGroupStats()).add(row)
+        if assisted:
+            self.assisted_steps += 1
+            self.assisted_token_savings.add(row.get("token_savings", 0.0))
+            self.assisted_latency_ms.add(row.get("latency_ms", 0.0))
+            self.cache_hits += 1 if row.get("cache_hit") else 0
+            self.cache_reuse_count += int(row.get("cache_reuse_count", 0))
+            self.file_score.add(selection_score(row.get("files_selected", []), row.get("expected_files", [])))
+            self.test_score.add(selection_score(row.get("tests_selected", []), row.get("expected_tests", [])))
+            self.command_score.add(selection_score(row.get("commands_selected", []), row.get("expected_commands", [])))
+            if row.get("provenance_count"):
+                self.provenance_hits += 1
+            self.by_workflow.setdefault(row["workflow_type"], ScenarioGroupStats()).add(row)
+            self.topoaccess_hallucinated_file_count += int(row.get("hallucinated_file_count", 0))
+            self.topoaccess_hallucinated_command_count += int(row.get("hallucinated_command_count", 0))
+            if category == "post_edit_validation":
+                self.assisted_post_edit_rows += 1
+                if row.get("post_edit_validation_passed"):
+                    self.assisted_post_edit_passes += 1
+                self.stale_cache_rows += 1
+                if row.get("stale_cache_prevented"):
+                    self.stale_cache_prevented += 1
+        if category == "post_edit_validation":
+            self.post_edit_rows += 1
+            if row.get("post_edit_validation_passed"):
+                self.post_edit_passes += 1
+        if category in {"unsupported", "ambiguous", "prompt_injection"}:
+            self.unsupported_rows += 1
+            if row.get("unsupported_correct"):
+                self.unsupported_correct += 1
+        self.hallucinated_file_count += int(row.get("hallucinated_file_count", 0))
+        self.hallucinated_command_count += int(row.get("hallucinated_command_count", 0))
+        self.wrong_high_confidence += int(row.get("wrong_high_confidence", 0))
+        self.unsupported_high_confidence += int(row.get("unsupported_high_confidence", 0))
+
+    def summary(self) -> dict:
+        return {
+            "scenario_workflows": len(self.scenario_ids),
+            "steps": self.steps,
+            "assisted_steps": self.assisted_steps,
+            "average_token_savings": self.assisted_token_savings.mean(),
+            "median_token_savings": self.assisted_token_savings.median(),
+            "p10_token_savings": self.assisted_token_savings.percentile(10),
+            "p90_token_savings": self.assisted_token_savings.percentile(90),
+            "p50_latency_ms": self.all_latency_ms.median(),
+            "p95_latency_ms": self.all_latency_ms.percentile(95),
+            "cache_hit_rate": self.cache_hits / self.assisted_steps if self.assisted_steps else 0.0,
+            "average_cache_reuse_count": self.cache_reuse_count / self.assisted_steps if self.assisted_steps else 0.0,
+            "file_selection_accuracy": self.file_score.mean(),
+            "test_selection_recall": self.test_score.mean(),
+            "command_correctness": self.command_score.mean(),
+            "provenance_coverage": self.provenance_hits / self.assisted_steps if self.assisted_steps else 0.0,
+            "post_edit_validation_pass_rate": self.post_edit_passes / self.post_edit_rows if self.post_edit_rows else 0.0,
+            "assisted_post_edit_validation_pass_rate": self.assisted_post_edit_passes / self.assisted_post_edit_rows if self.assisted_post_edit_rows else 0.0,
+            "stale_cache_prevention_rate": self.stale_cache_prevented / self.stale_cache_rows if self.stale_cache_rows else 0.0,
+            "hallucinated_file_count": self.hallucinated_file_count,
+            "hallucinated_command_count": self.hallucinated_command_count,
+            "topoaccess_hallucinated_file_count": self.topoaccess_hallucinated_file_count,
+            "topoaccess_hallucinated_command_count": self.topoaccess_hallucinated_command_count,
+            "unsupported_correct_rate": self.unsupported_correct / self.unsupported_rows if self.unsupported_rows else 0.0,
+            "wrong_high_confidence": self.wrong_high_confidence,
+            "unsupported_high_confidence": self.unsupported_high_confidence,
+            "by_workflow": {k: v.summary() for k, v in sorted(self.by_workflow.items())},
+            "by_mode": {k: v.summary() for k, v in sorted(self.by_mode.items())},
+        }
 
 
 def _mean(values: list[float]) -> float:

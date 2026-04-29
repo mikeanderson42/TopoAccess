@@ -13,6 +13,7 @@ from .benchmark_datasets import (
     build_task,
 )
 from .benchmark_stats import write_summary
+from .streaming_stats import BenchmarkRunResult, BenchmarkStats, iter_jsonl
 
 BASELINE_MODES = {"broad_context_baseline", "retrieved_context_baseline", "codex_style_without_topoaccess"}
 TOPOACCESS_MODES = set(MODES) - BASELINE_MODES
@@ -79,30 +80,44 @@ def run_marathon(
     summary: str | Path | None,
     report: str | Path | None,
     resume: bool = False,
-) -> list[dict]:
+) -> BenchmarkRunResult:
     target_rows = rows if rows <= 10000 else min(rows, max(fallback_rows, 10000))
     selected_modes = modes or MODES
     selected_categories = categories or CATEGORIES
     out_path = Path(out)
-    existing = _load_existing(out_path) if resume else []
-    start = len(existing)
-    generated = list(existing)
+    stats = BenchmarkStats()
+    retained_rows: list[dict] | None = [] if target_rows <= 5000 else None
+    start = 0
+    if resume:
+        for existing_row in iter_jsonl(out_path):
+            start += 1
+            stats.add(existing_row)
+            if retained_rows is not None:
+                retained_rows.append(existing_row)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     chunk_base = Path(chunk_dir) if chunk_dir else None
     if chunk_base:
         chunk_base.mkdir(parents=True, exist_ok=True)
-    with out_path.open("a" if resume and existing else "w", encoding="utf-8") as stream:
+    chunk_rows: list[dict] = []
+    with out_path.open("a" if resume and start else "w", encoding="utf-8") as stream:
         for idx in range(start, target_rows):
             row = generate_row(idx, profile, seed, selected_modes, selected_categories)
             stream.write(json.dumps(row, sort_keys=True) + "\n")
-            generated.append(row)
-            if chunk_base and (idx + 1) % chunk_size == 0:
-                _write_chunk(generated[-chunk_size:], chunk_base / f"chunk_{idx + 1:06d}.jsonl")
+            stats.add(row)
+            if retained_rows is not None:
+                retained_rows.append(row)
+            if chunk_base:
+                chunk_rows.append(row)
+                if len(chunk_rows) >= chunk_size:
+                    _write_chunk(chunk_rows, chunk_base / f"chunk_{idx + 1:06d}.jsonl")
+                    chunk_rows = []
+    if chunk_base and chunk_rows:
+        _write_chunk(chunk_rows, chunk_base / f"chunk_{target_rows:06d}.jsonl")
     if summary:
-        write_summary(generated, summary)
+        write_summary(stats, summary)
     if report:
-        _write_report(generated, report)
-    return generated
+        _write_report(stats, report)
+    return BenchmarkRunResult(row_count=max(start, target_rows), rows=retained_rows)
 
 
 def generate_row(index: int, profile: str, seed: int, modes: list[str], categories: list[str]) -> dict:
@@ -183,17 +198,11 @@ def _score(is_topo: bool, category: str, rng: random.Random, score_type: str) ->
     return round(min(1.0, base + rng.random() * 0.05), 3)
 
 
-def _load_existing(path: Path) -> list[dict]:
-    if not path.exists():
-        return []
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
-
-
 def _write_chunk(rows: list[dict], path: Path) -> None:
     path.write_text("\n".join(json.dumps(r, sort_keys=True) for r in rows) + "\n", encoding="utf-8")
 
 
-def _write_report(rows: list[dict], report: str | Path) -> None:
+def _write_report(rows: list[dict] | BenchmarkStats, report: str | Path) -> None:
     summary_path = Path(report).with_suffix(".summary.json")
     summary = write_summary(rows, summary_path)
     lines = [

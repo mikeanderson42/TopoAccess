@@ -9,6 +9,8 @@ TopoAccess is designed to abstain, warn, or return provenance-backed uncertainty
 - Stale docs can conflict with scripts or tests; TopoAccess should surface provenance rather than silently choose a winner.
 - External harness behavior depends on the installed client version and how it passes context/tool calls.
 - Cache freshness matters. Missing or corrupted cache states should be handled gracefully, but stale cache prevention depends on detectable file and metadata changes.
+- Very large benchmark, audit, or secret-scan runs may still be bounded by disk throughput and output size even though row summaries and traversal paths are streamed or filtered.
+- The local HTTP bridge is not an authenticated public network service; keep it bound to localhost unless you explicitly understand the exposure.
 
 ## Expected Safe Behavior
 
@@ -16,6 +18,7 @@ TopoAccess is designed to abstain, warn, or return provenance-backed uncertainty
 - Unsupported requests should abstain instead of inventing files, commands, or facts.
 - Prompt-injection text in repository files or user prompts should remain data, not instructions to disable safety rules.
 - Post-edit validation should identify impacted files/tests or say when evidence is insufficient.
+- Malformed stdio/HTTP tool input should return structured errors and allow the local bridge process to continue.
 
 ## Current Failure Mining
 

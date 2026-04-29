@@ -5,6 +5,8 @@ import statistics
 from collections import defaultdict
 from pathlib import Path
 
+from .streaming_stats import BenchmarkStats, iter_jsonl, write_json_summary
+
 TOPOACCESS_MODES = {
     "codex_style_with_topoaccess",
     "topoaccess_tool_only",
@@ -16,10 +18,14 @@ TOPOACCESS_MODES = {
 
 
 def load_rows(path: str | Path) -> list[dict]:
-    p = Path(path)
-    if not p.exists():
-        return []
-    return [json.loads(line) for line in p.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return list(iter_jsonl(path))
+
+
+def summarize_path(path: str | Path) -> dict:
+    stats = BenchmarkStats()
+    for row in iter_jsonl(path):
+        stats.add(row)
+    return stats.summary()
 
 
 def summarize_rows(rows: list[dict]) -> dict:
@@ -59,10 +65,14 @@ def summarize_rows(rows: list[dict]) -> dict:
     }
 
 
-def write_summary(rows: list[dict], out: str | Path, markdown: str | Path | None = None) -> dict:
-    summary = summarize_rows(rows)
-    Path(out).parent.mkdir(parents=True, exist_ok=True)
-    Path(out).write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+def write_summary(rows: list[dict] | BenchmarkStats | dict, out: str | Path, markdown: str | Path | None = None) -> dict:
+    if isinstance(rows, BenchmarkStats):
+        summary = rows.summary()
+    elif isinstance(rows, dict) and "rows" in rows and "assisted_rows" in rows:
+        summary = rows
+    else:
+        summary = summarize_rows(rows)
+    write_json_summary(summary, out)
     if markdown:
         write_summary_markdown(summary, markdown)
     return summary

@@ -34,6 +34,9 @@ Summary:
 - Prompt-injection, ambiguous request, missing-file, renamed-file, stale-docs, conflicting-command, and duplicate-symbol scenarios.
 - Tool-schema, HTTP-like, and stdio-like malformed payloads.
 - Mutation-style fixture changes that should trigger post-edit validation or uncertainty.
+- Streaming benchmark summaries for larger row/scenario runs.
+- Structured stdio and HTTP errors for malformed local tool requests.
+- Bounded audit and secret-scan traversal options for larger trees.
 
 ## What Changed
 
@@ -44,3 +47,7 @@ The gauntlet found one real CLI validation issue during development: `topoaccess
 These are public fixture tests, not evidence of universal behavior on every repository. Real-world results still depend on repository structure, command conventions, test coverage, cache freshness, and external harness versions.
 
 TopoAccess remains model-agnostic by default. Public robustness checks do not require Qwen, LM Studio, Ollama, GPU access, private caches, or model weights.
+
+## Local Bridge Hardening
+
+The HTTP and stdio bridges are still local-first integration surfaces, not public internet services. They now return structured, recoverable errors for malformed JSON, invalid request shapes, unknown endpoints, oversized HTTP payloads, and tool exceptions. The HTTP server remains bound to `127.0.0.1` by default and requires an explicit non-local opt-in.

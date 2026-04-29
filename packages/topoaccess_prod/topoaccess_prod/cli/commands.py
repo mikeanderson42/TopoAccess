@@ -151,9 +151,9 @@ def cmd_benchmark(args: object) -> int:
 
 def cmd_serve_http(args: object) -> int:
     if args.smoke:
-        print_json({"http_tool_server": "ready", "port": args.port, "profile": args.profile, "status": "pass"})
+        print_json({"http_tool_server": "ready", "host": args.host, "port": args.port, "profile": args.profile, "status": "pass"})
         return 0
-    serve(args.port)
+    serve(args.port, args.host, args.allow_nonlocal, args.max_body_bytes)
     return 0
 
 
@@ -182,14 +182,14 @@ def cmd_conformance(args: object) -> int:
 
 
 def cmd_audit(args: object) -> int:
-    rows = audit_artifacts(args.paths, args.out, args.report)
+    rows = audit_artifacts(args.paths, args.out, args.report, args.exclude_dir, args.max_file_bytes)
     failures = sum(row["result_status"] == "fail" for row in rows)
     print_json({"artifact_files": len(rows), "failures": failures})
     return 1 if failures else 0
 
 
 def cmd_secret_scan(args: object) -> int:
-    rows = scan_secrets(args.paths, args.out, args.report)
+    rows = scan_secrets(args.paths, args.out, args.report, args.exclude_dir, args.max_file_bytes)
     failures = sum(row["result_status"] == "fail" for row in rows)
     print_json({"secret_scan_files": len(rows), "failures": failures})
     return 1 if failures else 0

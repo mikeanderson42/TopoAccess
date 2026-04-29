@@ -194,6 +194,12 @@ What this does and does not prove:
 - It does not prove production correctness across every repository or external harness version.
 - It keeps exact lookup tool-only and keeps public tests model-free.
 
+## Scale Hardening
+
+The benchmark harnesses stream generated rows for larger runs. Current public fixture benchmark values are unchanged, but stress and resume runs no longer need to retain every generated row in memory before writing summaries. Scenario benchmark summaries use the same bounded aggregation posture.
+
+This is an implementation hardening detail, not a new benchmark claim. Public benchmark numbers remain scoped to the fixture suites and should be remeasured on each repository and workflow mix.
+
 Reproduce the core gauntlet summaries:
 
 ```bash
