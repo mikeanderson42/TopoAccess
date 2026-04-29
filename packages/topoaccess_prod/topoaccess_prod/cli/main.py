@@ -97,8 +97,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     http = sub.add_parser("serve-http", help="Start HTTP tool server; use --smoke for non-blocking check.")
     http.add_argument("--profile", default="demo")
+    http.add_argument("--host", default="127.0.0.1")
     http.add_argument("--port", type=int, default=8876)
     http.add_argument("--smoke", action="store_true")
+    http.add_argument("--allow-nonlocal", action="store_true")
+    http.add_argument("--max-body-bytes", type=int, default=1_000_000)
     http.set_defaults(handler=commands.cmd_serve_http)
 
     stdio = sub.add_parser("stdio", help="Run stdio tool bridge.")
@@ -129,12 +132,16 @@ def build_parser() -> argparse.ArgumentParser:
     audit.add_argument("--paths", nargs="+", required=True)
     audit.add_argument("--out", default="runs/topoaccess_prod_v46/audit.jsonl")
     audit.add_argument("--report", default="REPORT_topoaccess_prod_v46_validation.md")
+    audit.add_argument("--exclude-dir", action="append", default=[])
+    audit.add_argument("--max-file-bytes", type=int, default=None)
     audit.set_defaults(handler=commands.cmd_audit)
 
     scan = sub.add_parser("secret-scan", help="Run secret scan checks.")
     scan.add_argument("--paths", nargs="+", required=True)
     scan.add_argument("--out", default="runs/topoaccess_prod_v46/secret_scan.jsonl")
     scan.add_argument("--report", default="REPORT_topoaccess_prod_v46_validation.md")
+    scan.add_argument("--exclude-dir", action="append", default=[])
+    scan.add_argument("--max-file-bytes", type=int, default=1_000_000)
     scan.set_defaults(handler=commands.cmd_secret_scan)
 
     self_check = sub.add_parser("self-check", help="Run product self-check.")

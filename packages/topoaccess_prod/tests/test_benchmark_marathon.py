@@ -18,3 +18,11 @@ def test_run_marathon_writes_rows(tmp_path):
     assert out.exists()
     assert (tmp_path / "summary.json").exists()
     assert all("direct_tokens_estimate" in row for row in rows)
+
+
+def test_run_marathon_large_result_does_not_retain_all_rows(tmp_path):
+    out = tmp_path / "bench.jsonl"
+    result = run_marathon("demo", 6000, 6000, 500, 7, ["topoaccess_tool_only"], ["exact_lookup"], out, tmp_path / "chunks", tmp_path / "summary.json", tmp_path / "report.md")
+    assert len(result) == 6000
+    assert result.rows is None
+    assert sum(1 for _ in out.open(encoding="utf-8")) == 6000
